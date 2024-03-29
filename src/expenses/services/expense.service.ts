@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Expense } from '../models/expense.model';
 import { CreateExpenseDto } from '../dtos/expenses';
@@ -14,6 +14,11 @@ export class ExpenseService {
     private readonly accontService: AccountService,
   ) {}
 
+  public async findById(id: number): Promise<Expense | null> {
+    const expense = await this.expenseModel.findByPk(id);
+    return expense ?? null;
+  }
+
   public async find() {
     const query = {};
     const expenses = await this.expenseModel.findAll({
@@ -23,11 +28,11 @@ export class ExpenseService {
     return expenses;
   }
 
-  public async create(data: CreateExpenseDto) {
+  public async create(data: CreateExpenseDto): Promise<Expense | null> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
-    await this.expenseModel.create({
+    const expense = await this.expenseModel.create<Expense | null>({
       accountId: data.accountId,
       amount: data.amount,
       description: data.description,
@@ -35,11 +40,15 @@ export class ExpenseService {
       date: data.date,
     });
     await this.accontService.decreseAmount(data.accountId, data.amount);
+    return expense ?? null;
   }
 
   public async delete(expenseId: number): Promise<void> {
     const expense = await this.expenseModel.findByPk(expenseId);
-    await this.expenseModel.destroy({ where: { id: expenseId } });
+    if (expense) throw new NotFoundException('expense not found');
+    await this.expenseModel.destroy({
+      where: { id: expenseId },
+    });
     await this.accontService.increseAmount(expense.accountId, expense.amount);
   }
 }

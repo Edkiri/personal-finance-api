@@ -26,6 +26,13 @@ export class Debt extends Model {
   amount: number;
 
   @Column({
+    type: 'FLOAT',
+    defaultValue: 0,
+    field: 'total_paid',
+  })
+  totalPaid: number;
+
+  @Column({
     type: 'BOOLEAN',
     defaultValue: false,
   })

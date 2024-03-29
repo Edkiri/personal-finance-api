@@ -15,6 +15,6 @@ import { ExpenseSourceService } from './services/expense-source.service';
   ],
   controllers: [ExpenseController],
   providers: [ExpenseService, ExpenseSourceService],
-  exports: [ExpenseSourceService],
+  exports: [ExpenseSourceService, ExpenseService],
 })
 export default class ExpenseModule {}

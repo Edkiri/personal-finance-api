@@ -27,7 +27,6 @@ export class AccountService {
   async increseAmount(accountId: number, amount: number): Promise<void> {
     const account = await this.acountModel.findByPk(accountId);
     if (!account) throw new NotFoundException('Account not found.');
-
     this.acountModel.update(
       { amount: parseFloat((account.amount + amount).toFixed(3)) },
       { where: { id: account.id } },

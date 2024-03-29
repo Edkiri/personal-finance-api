@@ -10,6 +10,7 @@ import ExpenseModule from './expenses/expense.module';
 import { AccountModule } from './accounts/acount.module';
 import { Debt } from './debts/models/debt.model';
 import DebtModule from './debts/debt.module';
+import { DebtExpense } from './debts/models/debt-expense.mode';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import DebtModule from './debts/debt.module';
         ExpenseSource,
         Expense,
         Debt,
+        DebtExpense,
       ],
       autoLoadModels: true,
       synchronize: true,

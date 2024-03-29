@@ -24,6 +24,13 @@ export class DebtService {
     });
   }
 
+  async findById(id: number): Promise<Debt | null> {
+    const debt = await this.debtModel.findByPk(id, {
+      include: [ExpenseSource],
+    });
+    return debt ?? null;
+  }
+
   async findAll(): Promise<Debt[]> {
     return this.debtModel.findAll({ include: [ExpenseSource] });
   }
