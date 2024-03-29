@@ -8,6 +8,8 @@ import { ExpenseSource } from './expenses/models/expense-source.model';
 import { Expense } from './expenses/models/expense.model';
 import ExpenseModule from './expenses/expense.module';
 import { AccountModule } from './accounts/acount.module';
+import { Debt } from './debts/models/debt.model';
+import DebtModule from './debts/debt.module';
 
 @Module({
   imports: [
@@ -18,13 +20,22 @@ import { AccountModule } from './accounts/acount.module';
       username: 'root',
       password: 'password',
       database: 'personal-finance',
-      models: [Account, Bank, Currency, IncomeSource, ExpenseSource, Expense],
+      models: [
+        Account,
+        Bank,
+        Currency,
+        IncomeSource,
+        ExpenseSource,
+        Expense,
+        Debt,
+      ],
       autoLoadModels: true,
       synchronize: true,
       logging: false,
     }),
     ExpenseModule,
     AccountModule,
+    DebtModule,
   ],
   controllers: [],
   providers: [],
