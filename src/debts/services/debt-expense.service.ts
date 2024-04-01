@@ -15,6 +15,7 @@ export class DebtExpenseService {
     private readonly sequelize: Sequelize,
   ) {}
 
+  // create a expense with the debt expense_source
   async payDebt(data: PayDebtDto): Promise<void> {
     try {
       await this.sequelize.transaction(async (t) => {

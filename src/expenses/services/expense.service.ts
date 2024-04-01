@@ -45,7 +45,7 @@ export class ExpenseService {
 
   public async delete(expenseId: number): Promise<void> {
     const expense = await this.expenseModel.findByPk(expenseId);
-    if (expense) throw new NotFoundException('expense not found');
+    if (!expense) throw new NotFoundException('expense not found');
     await this.expenseModel.destroy({
       where: { id: expenseId },
     });

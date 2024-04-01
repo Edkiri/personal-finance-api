@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  HttpCode,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
 import { CreateExpenseDto } from '../dtos/expenses';
@@ -37,6 +38,7 @@ export class ExpenseController {
   }
 
   @Delete(':expenseId')
+  @HttpCode(204)
   async deleteExpense(@Param('expenseId', ParseIntPipe) expenseId: number) {
     await this.expenseService.delete(expenseId);
     return;
