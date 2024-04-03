@@ -5,6 +5,7 @@ import { CreateExpenseDto } from '../dtos/expenses';
 import { ExpenseSourceService } from './expense-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { ExpenseSource } from '../models/expense-source.model';
+import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 
 @Injectable()
 export class ExpenseService {
@@ -19,11 +20,13 @@ export class ExpenseService {
     return expense ?? null;
   }
 
-  public async find() {
+  public async find(payload: FindExpenseQueryDto) {
     const query = {};
     const expenses = await this.expenseModel.findAll({
       where: query,
       include: ExpenseSource,
+      limit: payload.limit,
+      offset: payload.offset,
     });
     return expenses;
   }

@@ -7,10 +7,12 @@ import {
   ParseIntPipe,
   Post,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
 import { CreateExpenseDto } from '../dtos/expenses';
 import { ExpenseSourceService } from '../services/expense-source.service';
+import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 
 @Controller('expenses')
 export class ExpenseController {
@@ -26,8 +28,8 @@ export class ExpenseController {
   }
 
   @Get()
-  async findExpenses() {
-    const expenses = await this.expenseService.find();
+  async findExpenses(@Query() query: FindExpenseQueryDto) {
+    const expenses = await this.expenseService.find(query);
     return expenses.map((expense) => expense.toJSON());
   }
 
