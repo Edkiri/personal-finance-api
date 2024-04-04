@@ -12,7 +12,7 @@ export class ExpenseService {
   constructor(
     @InjectModel(Expense) private readonly expenseModel: typeof Expense,
     private readonly expenseSourceService: ExpenseSourceService,
-    private readonly accontService: AccountService,
+    private readonly accountService: AccountService,
   ) {}
 
   public async findById(id: number): Promise<Expense | null> {
@@ -20,7 +20,7 @@ export class ExpenseService {
     return expense ?? null;
   }
 
-  public async find(payload: FindExpenseQueryDto) {
+  public async find(payload: FindExpenseQueryDto): Promise<Expense[]> {
     const query = {};
     const expenses = await this.expenseModel.findAll({
       where: query,
@@ -42,7 +42,7 @@ export class ExpenseService {
       expenseSourceId: expenseSource.id,
       date: data.date,
     });
-    await this.accontService.decreseAmount(data.accountId, data.amount);
+    await this.accountService.decreseAmount(data.accountId, data.amount);
     return expense ?? null;
   }
 
@@ -52,6 +52,6 @@ export class ExpenseService {
     await this.expenseModel.destroy({
       where: { id: expenseId },
     });
-    await this.accontService.increseAmount(expense.accountId, expense.amount);
+    await this.accountService.increseAmount(expense.accountId, expense.amount);
   }
 }

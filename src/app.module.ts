@@ -11,6 +11,8 @@ import { AccountModule } from './accounts/acount.module';
 import { Debt } from './debts/models/debt.model';
 import DebtModule from './debts/debt.module';
 import { DebtExpense } from './debts/models/debt-expense.mode';
+import { Income } from './incomes/models/income.model';
+import IncomeModule from './incomes/income.module';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { DebtExpense } from './debts/models/debt-expense.mode';
         Account,
         Bank,
         Currency,
+        Income,
         IncomeSource,
         ExpenseSource,
         Expense,
@@ -38,6 +41,7 @@ import { DebtExpense } from './debts/models/debt-expense.mode';
     ExpenseModule,
     AccountModule,
     DebtModule,
+    IncomeModule,
   ],
   controllers: [],
   providers: [],
