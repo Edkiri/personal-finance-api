@@ -27,6 +27,7 @@ export class ExpenseService {
       include: ExpenseSource,
       limit: payload.limit,
       offset: payload.offset,
+      order: [['date', 'DESC']],
     });
     return expenses;
   }
