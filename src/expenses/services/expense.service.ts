@@ -6,6 +6,7 @@ import { ExpenseSourceService } from './expense-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { ExpenseSource } from '../models/expense-source.model';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ExpenseService {
@@ -21,7 +22,14 @@ export class ExpenseService {
   }
 
   public async find(payload: FindExpenseQueryDto): Promise<Expense[]> {
-    const query = {};
+    const query: any = {};
+
+    if (payload.dateFrom) {
+      const { dateFrom } = payload;
+      const dateTo = payload.dateTo ?? new Date();
+      query.date = { [Op.between]: [new Date(dateFrom), dateTo] };
+    }
+
     const expenses = await this.expenseModel.findAll({
       where: query,
       include: ExpenseSource,

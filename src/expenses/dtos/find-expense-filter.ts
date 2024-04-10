@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsPositive } from 'class-validator';
 
 export class FindExpenseQueryDto {
   @IsNumber()
@@ -9,4 +9,12 @@ export class FindExpenseQueryDto {
   @IsNumber()
   @IsOptional()
   offset?: number;
+
+  @IsDate()
+  @IsOptional()
+  dateFrom?: Date;
+
+  @IsDate()
+  @IsOptional()
+  dateTo?: Date;
 }
