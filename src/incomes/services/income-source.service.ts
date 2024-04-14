@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { IncomeSource } from '../income-source.model';
+import { IncomeSource } from '../models/income-source.model';
 
 @Injectable()
 export class IncomeSourceService {

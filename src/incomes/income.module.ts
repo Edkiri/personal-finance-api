@@ -4,9 +4,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Income } from './models/income.model';
 import { IncomeSource } from './models/income-source.model';
 import { AccountModule } from 'src/accounts/acount.module';
-import { IncomeSourceService } from './models/services/income-source.service';
-import { IncomeController } from './models/controllers/income.controller';
-import { IncomeService } from './models/services/income.service';
+import { IncomeController } from './controllers/income.controller';
+import { IncomeSourceService } from './services/income-source.service';
+import { IncomeService } from './services/income.service';
 
 @Module({
   imports: [SequelizeModule.forFeature([Income, IncomeSource]), AccountModule],

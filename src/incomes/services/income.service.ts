@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { Income } from '../income.model';
 import { CreateIncomeDto } from 'src/incomes/dtos/create-income.dto';
 import { IncomeSourceService } from './income-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
-import { IncomeSource } from '../income-source.model';
+import { Income } from '../models/income.model';
+import { IncomeSource } from '../models/income-source.model';
 
 @Injectable()
 export class IncomeService {
