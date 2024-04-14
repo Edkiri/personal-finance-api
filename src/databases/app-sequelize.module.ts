@@ -9,17 +9,20 @@ import { ExpenseSource } from 'src/expenses/models/expense-source.model';
 import { Expense } from 'src/expenses/models/expense.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
 import { Income } from 'src/incomes/models/income.model';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Global()
 @Module({
   imports: [
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: 'password',
-      database: 'personal-finance',
+      username: process.env.POSTGRES_USER,
+      host: process.env.POSTGRES_HOST,
+      database: process.env.POSTGRES_DB,
+      password: process.env.POSTGRES_PASSWORD,
+      port: Number(process.env.POSTGRES_PORT),
       models: [
         Account,
         Bank,
