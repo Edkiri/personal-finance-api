@@ -52,7 +52,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
-      bankId: {
+      bank_id: {
         type: Sequelize.INTEGER,
         references: {
           model: 'banks',
@@ -61,7 +61,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      currencyId: {
+      currency_id: {
         type: Sequelize.INTEGER,
         references: {
           model: 'currencies',
