@@ -1,7 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AccountService } from '../services/account.service';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 
 @Controller('accounts')
+@UseGuards(AuthenticatedGuard)
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 

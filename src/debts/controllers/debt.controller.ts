@@ -1,11 +1,20 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { DebtService } from '../services/debt.model';
 import { CreateDebtDto } from '../dtos/debts';
 import { Debt } from '../models/debt.model';
 import { DebtExpenseService } from '../services/debt-expense.service';
 import { PayDebtDto } from '../dtos/debt-expense';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 
 @Controller('debts')
+@UseGuards(AuthenticatedGuard)
 export class DebtController {
   constructor(
     private readonly debtService: DebtService,

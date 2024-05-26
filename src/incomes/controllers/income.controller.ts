@@ -7,12 +7,15 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { IncomeSourceService } from '../services/income-source.service';
 import { CreateIncomeDto } from 'src/incomes/dtos/create-income.dto';
 import { IncomeService } from '../services/income.service';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 
 @Controller('incomes')
+@UseGuards(AuthenticatedGuard)
 export class IncomeController {
   constructor(
     private readonly incomeService: IncomeService,

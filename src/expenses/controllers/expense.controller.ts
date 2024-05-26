@@ -8,13 +8,16 @@ import {
   Post,
   HttpCode,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
 import { CreateExpenseDto } from '../dtos/expenses';
 import { ExpenseSourceService } from '../services/expense-source.service';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
+import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 
 @Controller('expenses')
+@UseGuards(AuthenticatedGuard)
 export class ExpenseController {
   constructor(
     private readonly expenseService: ExpenseService,
