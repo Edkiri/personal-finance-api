@@ -21,7 +21,6 @@ export class Income extends Model {
     type: 'FLOAT',
     allowNull: false,
   })
-  @Column
   amount: number;
 
   @Column({
