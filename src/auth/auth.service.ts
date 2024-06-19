@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from './dtos/auth.dto';
+import { LoginDto, SignupDto } from './dtos/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
@@ -13,14 +13,22 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
+  async signup(data: SignupDto): Promise<void> {
+    await this.userService.create(data);
+  }
+  
   async login(data: LoginDto): Promise<{ access_token: string }> {
     const user = await this.userService.findByEmail(data.email);
+    if(!user) {
+      throw new UnauthorizedException();
+    }
     const validPassword = bcrypt.compareSync(data.password, user.password);
-    if (!user || !validPassword) {
+    if (!validPassword) {
       throw new UnauthorizedException();
     }
     return {
       access_token: await this.jwtService.signAsync({ userId: user.id }),
     };
   }
+
 }

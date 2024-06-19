@@ -1,15 +1,27 @@
-import { Injectable } from "@nestjs/common";
-import { User } from "../models/user.model";
-import { InjectModel } from "@nestjs/sequelize";
-
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { User } from '../models/user.model';
+import { InjectModel } from '@nestjs/sequelize';
+import { SignupDto } from 'src/auth/dtos/auth.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User) private readonly userModel: typeof User,
-  ) {}
+  constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ where: { email } });
+  }
+
+  async create(data: SignupDto): Promise<User | null> {
+    const emailTaken = await this.findByEmail(data.email);
+    if (emailTaken) {
+      throw new BadRequestException('Email already taken');
+    }
+    const user = await this.userModel.create({
+      username: data.username,
+      password: bcrypt.hashSync(data.password, 10),
+      email: data.email,
+    });
+    return user;
   }
 }
