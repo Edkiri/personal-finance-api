@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript';
 import { Currency } from 'src/accounts/models/currency.model';
 import { ExpenseSource } from 'src/expenses/models/expense-source.model';
+import { User } from 'src/users/models/user.model';
 
 @Table({
   tableName: 'debts',
@@ -62,4 +63,11 @@ export class Debt extends Model {
 
   @BelongsTo(() => ExpenseSource)
   expenseSource: ExpenseSource;
+
+  @ForeignKey(() => User)
+  @Column({ field: 'user_id' })
+  userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 }

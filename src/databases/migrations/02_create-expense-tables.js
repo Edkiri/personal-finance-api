@@ -19,7 +19,6 @@ module.exports = {
       },
     });
 
-    // Crear la tabla 'expenses'
     await queryInterface.createTable('expenses', {
       id: {
         allowNull: false,
@@ -52,6 +51,13 @@ module.exports = {
           key: 'id',
         },
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      }
     });
 
     await queryInterface.addConstraint('expenses', {
@@ -61,8 +67,15 @@ module.exports = {
         table: 'accounts',
         field: 'id',
       },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+    });
+
+    await queryInterface.addConstraint('expenses', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
+        field: 'id',
+      },
     });
 
     await queryInterface.addConstraint('expenses', {

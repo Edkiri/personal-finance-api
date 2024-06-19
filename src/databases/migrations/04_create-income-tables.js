@@ -53,10 +53,25 @@ module.exports = {
           model: 'income_sources',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      }
+    });
+
+    await queryInterface.addConstraint('incomes', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
+        field: 'id',
       },
     });
+    
   },
   async down(queryInterface) {
     await queryInterface.dropTable('incomes');

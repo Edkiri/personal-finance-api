@@ -58,8 +58,6 @@ module.exports = {
           model: 'banks',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       currency_id: {
         type: Sequelize.INTEGER,
@@ -67,8 +65,22 @@ module.exports = {
           model: 'currencies',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      }
+    });
+
+    await queryInterface.addConstraint('accounts', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
+        field: 'id',
       },
     });
   },

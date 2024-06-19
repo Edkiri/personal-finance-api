@@ -40,8 +40,6 @@ module.exports = {
           model: 'currencies',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       expense_source_id: {
         type: Sequelize.INTEGER,
@@ -50,8 +48,22 @@ module.exports = {
           model: 'expense_sources',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      }
+    });
+
+    await queryInterface.addConstraint('debts', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
+        field: 'id',
       },
     });
 
@@ -73,8 +85,6 @@ module.exports = {
           model: 'expenses',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       debt_id: {
         type: Sequelize.INTEGER,
@@ -83,8 +93,6 @@ module.exports = {
           model: 'debts',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       date: {
         type: Sequelize.DATE,

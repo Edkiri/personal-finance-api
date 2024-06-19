@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript';
 import { Bank } from './bank.model';
 import { Currency } from './currency.model';
+import { User } from 'src/users/models/user.model';
 
 @Table({
   tableName: 'accounts',
@@ -39,4 +40,11 @@ export class Account extends Model {
 
   @BelongsTo(() => Currency)
   currency: Currency;
+
+  @ForeignKey(() => User)
+  @Column({ field: 'user_id' })
+  userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 }
