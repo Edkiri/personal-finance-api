@@ -10,11 +10,12 @@ export class DebtService {
     private readonly expenseSourceService: ExpenseSourceService,
   ) {}
 
-  async create(data: CreateDebtDto): Promise<void> {
+  async create(userId: number, data: CreateDebtDto): Promise<void> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
     await this.debtModel.create({
+      userId,
       creditor: data.creditor,
       currencyId: data.currencyId,
       amount: data.amount,
@@ -31,7 +32,7 @@ export class DebtService {
     return debt ?? null;
   }
 
-  async findAll(): Promise<Debt[]> {
-    return this.debtModel.findAll({ include: [ExpenseSource] });
+  async findAll(userId: number): Promise<Debt[]> {
+    return this.debtModel.findAll({ where: { userId }, include: [ExpenseSource] });
   }
 }

@@ -3,12 +3,17 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Debt } from './models/debt.model';
 import ExpenseModule from 'src/expenses/expense.module';
 import { DebtController } from './controllers/debt.controller';
-import { DebtService } from './services/debt.model';
+import { DebtService } from './services/debt.service';
 import { DebtExpenseService } from './services/debt-expense.service';
 import { DebtExpense } from './models/debt-expense.mode';
+import { AccountModule } from 'src/accounts/acount.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Debt, DebtExpense]), ExpenseModule],
+  imports: [
+    SequelizeModule.forFeature([Debt, DebtExpense]),
+    ExpenseModule,
+    AccountModule,
+  ],
   controllers: [DebtController],
   providers: [DebtService, DebtExpenseService],
 })

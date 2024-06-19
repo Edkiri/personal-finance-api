@@ -14,7 +14,7 @@ import { IncomeSourceService } from '../services/income-source.service';
 import { CreateIncomeDto } from 'src/incomes/dtos/create-income.dto';
 import { IncomeService } from '../services/income.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
-import { IsIncomeOwner } from '../guards/is-income-owner.guard';
+import { IsIncomeOwnerGuard } from '../guards/is-income-owner.guard';
 import { IsAccountOwnerGuard } from 'src/accounts/guards/is-account-owner.guard';
 import { Request } from 'express';
 
@@ -48,7 +48,7 @@ export class IncomeController {
   }
 
   @Delete(':incomeId')
-  @UseGuards(IsIncomeOwner)
+  @UseGuards(IsIncomeOwnerGuard)
   @HttpCode(204)
   async deleteIncome(@Param('incomeId', ParseIntPipe) incomeId: number) {
     await this.incomeService.delete(incomeId);

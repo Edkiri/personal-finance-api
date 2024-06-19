@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { DebtExpense } from '../models/debt-expense.mode';
 import { ExpenseService } from 'src/expenses/services/expense.service';
-import { DebtService } from './debt.model';
+import { DebtService } from './debt.service';
 import { PayDebtDto } from '../dtos/debt-expense';
 import { Sequelize } from 'sequelize-typescript';
 import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
