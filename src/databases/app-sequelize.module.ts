@@ -10,7 +10,9 @@ import { Expense } from 'src/expenses/models/expense.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
 import { Income } from 'src/incomes/models/income.model';
 import * as dotenv from 'dotenv';
+import { User } from 'src/users/models/user.model';
 
+// TODO: Make a configuration module to validate and export all env variables 
 dotenv.config();
 
 @Global()
@@ -24,6 +26,7 @@ dotenv.config();
       password: process.env.POSTGRES_PASSWORD,
       port: Number(process.env.POSTGRES_PORT),
       models: [
+        User,
         Account,
         Bank,
         Currency,
