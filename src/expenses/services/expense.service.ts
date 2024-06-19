@@ -17,12 +17,11 @@ export class ExpenseService {
   ) {}
 
   public async findById(id: number): Promise<Expense | null> {
-    const expense = await this.expenseModel.findByPk(id);
-    return expense ?? null;
+    return this.expenseModel.findByPk(id);
   }
 
-  public async find(payload: FindExpenseQueryDto): Promise<Expense[]> {
-    const query: any = {};
+  public async find(userId: number, payload: FindExpenseQueryDto): Promise<Expense[]> {
+    const query: any = { userId };
 
     if (payload.dateFrom) {
       const { dateFrom } = payload;
@@ -37,14 +36,16 @@ export class ExpenseService {
       offset: payload.offset,
       order: [['date', 'DESC']],
     });
+
     return expenses;
   }
 
-  public async create(data: CreateExpenseDto): Promise<Expense | null> {
+  public async create(userId: number, data: CreateExpenseDto): Promise<Expense | null> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
     const expense = await this.expenseModel.create<Expense | null>({
+      userId,
       accountId: data.accountId,
       amount: data.amount,
       description: data.description,
@@ -57,7 +58,6 @@ export class ExpenseService {
 
   public async delete(expenseId: number): Promise<void> {
     const expense = await this.expenseModel.findByPk(expenseId);
-    if (!expense) throw new NotFoundException('expense not found');
     await this.expenseModel.destroy({
       where: { id: expenseId },
     });

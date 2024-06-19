@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { DebtService } from '../services/debt.model';
@@ -12,6 +13,7 @@ import { Debt } from '../models/debt.model';
 import { DebtExpenseService } from '../services/debt-expense.service';
 import { PayDebtDto } from '../dtos/debt-expense';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
+import { Request } from 'express';
 
 @Controller('debts')
 @UseGuards(AuthenticatedGuard)
@@ -36,8 +38,9 @@ export class DebtController {
 
   @Post('/pay')
   @HttpCode(204)
-  async createDebtExpense(@Body() data: PayDebtDto) {
-    await this.debtExpenseService.payDebt(data);
+  async createDebtExpense(@Req() request: Request, @Body() data: PayDebtDto) {
+    const userId = Number(request.user.userId);
+    await this.debtExpenseService.payDebt(userId, data);
     return;
   }
 }

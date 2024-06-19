@@ -16,15 +16,17 @@ export class DebtExpenseService {
   ) {}
 
   // create a expense with the debt expense_source
-  async payDebt(data: PayDebtDto): Promise<void> {
+  async payDebt(userId: number, data: PayDebtDto): Promise<void> {
     try {
       await this.sequelize.transaction(async (t) => {
         const transactionHost = { transaction: t };
 
         const debt = await this.debtService.findById(data.debtId);
-        if (!debt) throw new NotFoundException('debt not found');
+        if (!debt) {
+          throw new NotFoundException('debt not found');
+        }
 
-        const expense = await this.expenseService.create({
+        const expense = await this.expenseService.create(userId, {
           accountId: data.accountId,
           amount: data.amount,
           expenseSourceName: debt.expenseSource.name,
