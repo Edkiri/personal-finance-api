@@ -25,3 +25,27 @@ export class CreateAccountDto {
   @IsOptional()
   description?: string;
 }
+
+export class UpdateAccountDto {
+  @IsPositive()
+  @IsNumber()
+  amount!: number;
+
+  @IsNumber()
+  @IsPositive()
+  bankId!: number;
+
+  @IsNumber()
+  @IsPositive()
+  currencyId!: number;
+
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsNotEmpty()
+  name!: string;
+
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsOptional()
+  description?: string;
+}

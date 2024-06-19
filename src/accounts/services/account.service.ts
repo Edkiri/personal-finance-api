@@ -3,7 +3,7 @@ import { Account } from '../models/account.model';
 import { NotFoundException } from '@nestjs/common';
 import { Bank } from '../models/bank.model';
 import { Currency } from '../models/currency.model';
-import { CreateAccountDto } from '../dtos/accounts.dto';
+import { CreateAccountDto, UpdateAccountDto } from '../dtos/accounts.dto';
 
 export class AccountService {
   constructor(
@@ -21,11 +21,25 @@ export class AccountService {
     });
   }
 
+  async update(accountId: number, data: UpdateAccountDto): Promise<void> {
+    const account = await this.acountModel.findByPk(accountId);
+    account.amount = data.amount;
+    account.bankId = data.bankId;
+    account.currencyId = data.currencyId;
+    account.name = data.name;
+    account.description = data.description;
+    await account.save();
+  }
+
   async findByUserId(userId: number): Promise<Account[]> {
     return this.acountModel.findAll({
       where: { userId },
       include: [Bank, Currency],
     });
+  }
+
+  async findById(accountId: number): Promise<Account | null> {
+    return this.acountModel.findByPk(accountId);
   }
 
   async decreseAmount(accountId: number, amount: number): Promise<void> {
