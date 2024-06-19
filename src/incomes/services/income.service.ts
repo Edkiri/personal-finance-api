@@ -16,11 +16,12 @@ export class IncomeService {
     private readonly accountService: AccountService,
   ) {}
 
-  public async create(data: CreateIncomeDto): Promise<Income | null> {
+  public async create(userId: number, data: CreateIncomeDto): Promise<Income | null> {
     const incomeSource = await this.incomeSourceService.findByNameOrCreate(
       data.incomeSourceName,
     );
     const income = await this.incomeModel.create<Income | null>({
+      userId,
       accountId: data.accountId,
       amount: data.amount,
       description: data.description,
@@ -31,13 +32,17 @@ export class IncomeService {
     return income ?? null;
   }
 
-  public async find(): Promise<Income[]> {
-    const query = {};
+  public async findByUserId(userId: number): Promise<Income[]> {
+    const query = { userId };
     const incomes = await this.incomeModel.findAll({
       where: query,
       include: IncomeSource,
     });
     return incomes;
+  }
+
+  public async findById(incomeId: number): Promise<Income | null> {
+    return this.incomeModel.findByPk(incomeId); 
   }
 
   public async delete(incomeId: number): Promise<void> {

@@ -7,12 +7,16 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { IncomeSourceService } from '../services/income-source.service';
 import { CreateIncomeDto } from 'src/incomes/dtos/create-income.dto';
 import { IncomeService } from '../services/income.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
+import { IsIncomeOwner } from '../guards/is-income-owner.guard';
+import { IsAccountOwnerGuard } from 'src/accounts/guards/is-account-owner.guard';
+import { Request } from 'express';
 
 @Controller('incomes')
 @UseGuards(AuthenticatedGuard)
@@ -23,14 +27,17 @@ export class IncomeController {
   ) {}
 
   @Get()
-  async findIncomes() {
-    const incomes = await this.incomeService.find();
+  async findIncomes(@Req() req: Request) {
+    const userId = req.user.userId;
+    const incomes = await this.incomeService.findByUserId(userId);
     return incomes.map((income) => income.toJSON());
   }
 
   @Post()
-  async createIncome(@Body() data: CreateIncomeDto) {
-    await this.incomeService.create(data);
+  @UseGuards(IsAccountOwnerGuard)
+  async createIncome(@Req() req: Request, @Body() data: CreateIncomeDto) {
+    const userId = req.user.userId;
+    await this.incomeService.create(userId, data);
     return;
   }
 
@@ -41,6 +48,7 @@ export class IncomeController {
   }
 
   @Delete(':incomeId')
+  @UseGuards(IsIncomeOwner)
   @HttpCode(204)
   async deleteIncome(@Param('incomeId', ParseIntPipe) incomeId: number) {
     await this.incomeService.delete(incomeId);
