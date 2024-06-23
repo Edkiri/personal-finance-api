@@ -1,14 +1,21 @@
-import { Transform } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import { Transform } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class CreateAccountDto {
   @IsPositive()
   @IsNumber()
   amount!: number;
 
-  @IsNumber()
-  @IsPositive()
-  bankId!: number;
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsNotEmpty()
+  bank!: string;
 
   @IsNumber()
   @IsPositive()
@@ -31,9 +38,10 @@ export class UpdateAccountDto {
   @IsNumber()
   amount!: number;
 
-  @IsNumber()
-  @IsPositive()
-  bankId!: number;
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsNotEmpty()
+  bank!: string;
 
   @IsNumber()
   @IsPositive()

@@ -1,7 +1,6 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { Account } from '../models/account.model';
 import { NotFoundException } from '@nestjs/common';
-import { Bank } from '../models/bank.model';
 import { Currency } from '../models/currency.model';
 import { CreateAccountDto, UpdateAccountDto } from '../dtos/accounts.dto';
 
@@ -16,7 +15,7 @@ export class AccountService {
       name: data.name,
       description: data.description,
       amount: data.amount,
-      bankId: data.bankId,
+      bank: data.bank,
       currencyId: data.currencyId
     });
   }
@@ -24,7 +23,7 @@ export class AccountService {
   async update(accountId: number, data: UpdateAccountDto): Promise<void> {
     const account = await this.acountModel.findByPk(accountId);
     account.amount = data.amount;
-    account.bankId = data.bankId;
+    account.bank = data.bank;
     account.currencyId = data.currencyId;
     account.name = data.name;
     account.description = data.description;
@@ -34,7 +33,7 @@ export class AccountService {
   async findByUserId(userId: number): Promise<Account[]> {
     return this.acountModel.findAll({
       where: { userId },
-      include: [Bank, Currency],
+      include: [Currency],
     });
   }
 

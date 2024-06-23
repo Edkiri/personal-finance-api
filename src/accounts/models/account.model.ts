@@ -1,11 +1,12 @@
+import { DataTypes } from 'sequelize';
 import {
+  AllowNull,
   BelongsTo,
   Column,
   ForeignKey,
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Bank } from './bank.model';
 import { Currency } from './currency.model';
 import { User } from 'src/users/models/user.model';
 
@@ -27,12 +28,8 @@ export class Account extends Model {
   })
   amount: number;
 
-  @ForeignKey(() => Bank)
-  @Column({ field: 'bank_id' })
-  bankId: number;
-
-  @BelongsTo(() => Bank)
-  bank: Bank;
+  @Column({ type: DataTypes.STRING, allowNull: false })
+  bank: string;
 
   @ForeignKey(() => Currency)
   @Column({ field: 'currency_id' })

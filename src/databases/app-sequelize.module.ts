@@ -1,7 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Account } from 'src/accounts/models/account.model';
-import { Bank } from 'src/accounts/models/bank.model';
 import { Currency } from 'src/accounts/models/currency.model';
 import { DebtExpense } from 'src/debts/models/debt-expense.mode';
 import { Debt } from 'src/debts/models/debt.model';
@@ -13,7 +12,7 @@ import * as dotenv from 'dotenv';
 import { User } from 'src/users/models/user.model';
 import { UserProfile } from 'src/users/models/profile.model';
 
-// TODO: Make a configuration module to validate and export all env variables 
+// TODO: Make a configuration module to validate and export all env variables
 dotenv.config();
 
 @Global()
@@ -30,7 +29,6 @@ dotenv.config();
         User,
         UserProfile,
         Account,
-        Bank,
         Currency,
         Income,
         IncomeSource,

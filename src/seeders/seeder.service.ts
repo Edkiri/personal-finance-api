@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Account } from 'src/accounts/models/account.model';
-import { Bank } from 'src/accounts/models/bank.model';
 import { Currency } from 'src/accounts/models/currency.model';
 import { User } from 'src/users/models/user.model';
 import * as bcrypt from 'bcrypt';
@@ -13,7 +12,6 @@ export class SeederService {
   constructor(
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Currency) private readonly currencyModel: typeof Currency,
-    @InjectModel(Bank) private readonly bankModel: typeof Bank,
     @InjectModel(Account) private readonly accountModel: typeof Account,
   ) {}
 
@@ -21,12 +19,6 @@ export class SeederService {
     // Currencies
     const eu = await this.currencyModel.create({ name: 'Euro', symbol: '€' });
     await this.currencyModel.create({ name: 'Dolar', symbol: '$' });
-
-    // Bank
-    const bbva = await this.bankModel.create({
-      name: 'BBVA',
-      description: 'España',
-    });
 
     // Admin user
     const admin = await this.userModel.create({
@@ -39,14 +31,14 @@ export class SeederService {
     await this.accountModel.create({
       name: 'Nómina',
       userId: admin.id,
-      bankId: bbva.id,
+      bank: 'BBVA',
       currencyId: eu.id,
       amount: 0,
     });
     await this.accountModel.create({
       name: 'Ahorro',
       userId: admin.id,
-      bankId: bbva.id,
+      bank: 'BBVA',
       currencyId: eu.id,
       amount: 0,
     });

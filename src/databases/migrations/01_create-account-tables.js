@@ -1,21 +1,5 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('banks', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        type: Sequelize.STRING,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.STRING,
-      },
-    });
-
     await queryInterface.createTable('currencies', {
       id: {
         allowNull: false,
@@ -52,12 +36,9 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
-      bank_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'banks',
-          key: 'id',
-        },
+      bank: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       currency_id: {
         type: Sequelize.INTEGER,
@@ -72,7 +53,7 @@ module.exports = {
           model: 'users',
           key: 'id',
         },
-      }
+      },
     });
 
     await queryInterface.addConstraint('accounts', {
@@ -87,6 +68,5 @@ module.exports = {
   async down(queryInterface) {
     await queryInterface.dropTable('accounts');
     await queryInterface.dropTable('currencies');
-    await queryInterface.dropTable('banks');
   },
 };
