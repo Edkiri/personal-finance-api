@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { SignupDto } from 'src/auth/dtos/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { UserProfile } from '../models/profile.model';
-import { OnboardUserDto } from '../dtos/user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,7 +17,7 @@ export class UserService {
   }
 
   async findById(userId: number): Promise<User | null> {
-    return this.userModel.findByPk(userId);
+    return this.userModel.findByPk(userId, { include: [UserProfile] });
   }
 
   async create(data: SignupDto): Promise<User | null> {

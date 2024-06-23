@@ -1,6 +1,16 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, SignupDto } from './dtos/auth.dto';
+import { LoginDto, OnboardUserDto, SignupDto } from './dtos/auth.dto';
+import { AuthenticatedGuard } from './guards/authenticated.guard';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -16,5 +26,12 @@ export class AuthController {
   @Post('signup')
   register(@Body() payload: SignupDto) {
     return this.authService.signup(payload);
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('onboard')
+  onboardUser(@Req() req: Request, @Body() payload: OnboardUserDto) {
+    const userId = req.user.userId;
+    this.authService.onboardUser(userId, payload);
   }
 }

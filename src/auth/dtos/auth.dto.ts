@@ -1,5 +1,14 @@
-import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
+import { CreateAccountDto } from 'src/accounts/dtos/accounts.dto';
 
 export class LoginDto {
   @IsString()
@@ -29,4 +38,12 @@ export class SignupDto {
   @Transform(({ value }) => value.trim())
   @Length(8)
   password: string;
+}
+
+export class OnboardUserDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateAccountDto)
+  accounts: CreateAccountDto[];
 }

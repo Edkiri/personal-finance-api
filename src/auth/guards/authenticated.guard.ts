@@ -28,7 +28,10 @@ export class AuthenticatedGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
       const user = await this.userService.findById(payload.userId);
-      req.user = { userId: payload.userId };
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      req.user = { userId: user.id };
     } catch {
       throw new UnauthorizedException();
     }

@@ -18,29 +18,29 @@ export class SeederService {
   async seed() {
     // Currencies
     const eu = await this.currencyModel.create({ name: 'Euro', symbol: '€' });
-    await this.currencyModel.create({ name: 'Dolar', symbol: '$' });
+    const us = await this.currencyModel.create({ name: 'Dolar', symbol: '$' });
 
     // Admin user
-    const admin = await this.userModel.create({
-      username: process.env.ADMIN_USERNAME,
-      password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
-      email: process.env.ADMIN_EMAIL,
-    });
+    // const admin = await this.userModel.create({
+    //   username: process.env.ADMIN_USERNAME,
+    //   password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
+    //   email: process.env.ADMIN_EMAIL,
+    // });
 
     // Accounts
-    await this.accountModel.create({
-      name: 'Nómina',
-      userId: admin.id,
-      bank: 'BBVA',
-      currencyId: eu.id,
-      amount: 0,
-    });
-    await this.accountModel.create({
-      name: 'Ahorro',
-      userId: admin.id,
-      bank: 'BBVA',
-      currencyId: eu.id,
-      amount: 0,
-    });
+    // await this.accountModel.create({
+    //   name: 'Nómina',
+    //   userId: admin.id,
+    //   bank: 'BBVA',
+    //   currencyId: eu.id,
+    //   amount: 0,
+    // });
+    // await this.accountModel.create({
+    //   name: 'Ahorro',
+    //   userId: admin.id,
+    //   bank: 'BBVA',
+    //   currencyId: eu.id,
+    //   amount: 0,
+    // });
   }
 }
