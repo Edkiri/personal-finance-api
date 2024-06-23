@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, HasOne, Model, Table } from 'sequelize-typescript';
+import { UserProfile } from './profile.model';
 
 @Table({
   tableName: 'users',
@@ -34,4 +35,7 @@ export class User extends Model {
     },
   })
   password: string;
+
+  @HasOne(() => UserProfile)
+  profile: UserProfile;
 }
