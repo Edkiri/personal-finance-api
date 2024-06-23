@@ -15,9 +15,4 @@ export class UserController {
     const userProfile = await this.userService.getUserProfile(userId);
     return userProfile;
   }
-
-  @Post('onboard')
-  async onboard(@Req() request: Request, @Body() payload: OnboardUserDto) {
-    const userId = request.user.userId;
-  }
 }

@@ -31,6 +31,9 @@ export class Account extends Model {
   @Column({ type: DataTypes.STRING, allowNull: false })
   bank: string;
 
+  @Column({ type: DataTypes.BOOLEAN, defaultValue: false })
+  isDefault: boolean;
+
   @ForeignKey(() => Currency)
   @Column({ field: 'currency_id' })
   currencyId: number;

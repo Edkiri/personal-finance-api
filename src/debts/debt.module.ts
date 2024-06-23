@@ -7,12 +7,14 @@ import { DebtService } from './services/debt.service';
 import { DebtExpenseService } from './services/debt-expense.service';
 import { DebtExpense } from './models/debt-expense.mode';
 import { AccountModule } from 'src/accounts/acount.module';
+import { UserModule } from 'src/users/user.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Debt, DebtExpense]),
     ExpenseModule,
     AccountModule,
+    UserModule,
   ],
   controllers: [DebtController],
   providers: [DebtService, DebtExpenseService],

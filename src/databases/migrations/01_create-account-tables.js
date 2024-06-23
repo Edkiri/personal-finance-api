@@ -40,6 +40,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      is_default: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       currency_id: {
         type: Sequelize.INTEGER,
         references: {

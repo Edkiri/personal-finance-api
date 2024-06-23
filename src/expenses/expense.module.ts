@@ -7,10 +7,12 @@ import { ExpenseService } from './services/expense.service';
 import { ExpenseController } from './controllers/expense.controller';
 import { AccountModule } from 'src/accounts/acount.module';
 import { ExpenseSourceService } from './services/expense-source.service';
+import { UserModule } from 'src/users/user.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Expense, ExpenseSource]),
+    UserModule,
     AccountModule,
   ],
   controllers: [ExpenseController],

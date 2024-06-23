@@ -7,9 +7,14 @@ import { AccountModule } from 'src/accounts/acount.module';
 import { IncomeController } from './controllers/income.controller';
 import { IncomeSourceService } from './services/income-source.service';
 import { IncomeService } from './services/income.service';
+import { UserModule } from 'src/users/user.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Income, IncomeSource]), AccountModule],
+  imports: [
+    SequelizeModule.forFeature([Income, IncomeSource]),
+    AccountModule,
+    UserModule,
+  ],
   controllers: [IncomeController],
   providers: [IncomeSourceService, IncomeService],
   exports: [],

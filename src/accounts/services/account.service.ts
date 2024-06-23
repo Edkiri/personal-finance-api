@@ -16,7 +16,8 @@ export class AccountService {
       description: data.description,
       amount: data.amount,
       bank: data.bank,
-      currencyId: data.currencyId
+      currencyId: data.currencyId,
+      isDefault: data.isDefault ? true : false,
     });
   }
 
@@ -27,6 +28,7 @@ export class AccountService {
     account.currencyId = data.currencyId;
     account.name = data.name;
     account.description = data.description;
+    account.isDefault = data.isDefault ? true : false;
     await account.save();
   }
 

@@ -1,15 +1,18 @@
 import { Transform } from 'class-transformer';
 import {
+  IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
+  Min,
 } from 'class-validator';
 
 export class CreateAccountDto {
-  @IsPositive()
-  @IsNumber()
+  @IsInt()
+  @Min(0, { message: 'Amount must be a positive number or zero' })
   amount!: number;
 
   @IsString()
@@ -31,11 +34,15 @@ export class CreateAccountDto {
   @IsNotEmpty()
   @IsOptional()
   description?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isDefault?: boolean;
 }
 
 export class UpdateAccountDto {
-  @IsPositive()
-  @IsNumber()
+  @IsInt()
+  @Min(0, { message: 'Amount must be a positive number or zero' })
   amount!: number;
 
   @IsString()
@@ -56,4 +63,8 @@ export class UpdateAccountDto {
   @Transform(({ value }) => value.trim())
   @IsOptional()
   description?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isDefault?: boolean;
 }
