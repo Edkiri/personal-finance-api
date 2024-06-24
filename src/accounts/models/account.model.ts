@@ -18,9 +18,6 @@ export class Account extends Model {
   @Column({ unique: true })
   name: string;
 
-  @Column({ allowNull: true })
-  description: string;
-
   @Column({
     type: 'FLOAT',
     allowNull: false,

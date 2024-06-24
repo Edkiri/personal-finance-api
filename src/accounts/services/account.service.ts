@@ -13,7 +13,6 @@ export class AccountService {
     await this.acountModel.create({
       userId,
       name: data.name,
-      description: data.description,
       amount: data.amount,
       bank: data.bank,
       currencyId: data.currencyId,
@@ -27,7 +26,6 @@ export class AccountService {
     account.bank = data.bank;
     account.currencyId = data.currencyId;
     account.name = data.name;
-    account.description = data.description;
     account.isDefault = data.isDefault ? true : false;
     await account.save();
   }

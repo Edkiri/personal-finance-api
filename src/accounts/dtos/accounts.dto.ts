@@ -29,12 +29,6 @@ export class CreateAccountDto {
   @IsNotEmpty()
   name!: string;
 
-  @IsString()
-  @Transform(({ value }) => value.trim())
-  @IsNotEmpty()
-  @IsOptional()
-  description?: string;
-
   @IsBoolean()
   @IsOptional()
   isDefault?: boolean;
@@ -58,11 +52,6 @@ export class UpdateAccountDto {
   @Transform(({ value }) => value.trim())
   @IsNotEmpty()
   name!: string;
-
-  @IsString()
-  @Transform(({ value }) => value.trim())
-  @IsOptional()
-  description?: string;
 
   @IsBoolean()
   @IsOptional()
