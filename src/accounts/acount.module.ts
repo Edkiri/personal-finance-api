@@ -16,6 +16,6 @@ import { UserCurrencies } from './models/user-currencies.model';
   ],
   controllers: [AccountController, CurrencyController],
   providers: [AccountService, CurrencyService],
-  exports: [AccountService],
+  exports: [AccountService, CurrencyService],
 })
 export class AccountModule {}
