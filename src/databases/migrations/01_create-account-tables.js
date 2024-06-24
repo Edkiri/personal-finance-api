@@ -28,9 +28,6 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
-      description: {
-        type: Sequelize.STRING,
-      },
       amount: {
         type: Sequelize.FLOAT,
         allowNull: false,
