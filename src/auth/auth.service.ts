@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/users/services/user.service';
 import { AccountService } from 'src/accounts/services/account.service';
+import { CurrencyService } from 'src/accounts/services/currency.service';
 dotenv.config();
 
 @Injectable()
@@ -12,6 +13,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly accountService: AccountService,
+    private readonly currencyService: CurrencyService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -37,7 +39,11 @@ export class AuthService {
     for await (const account of payload.accounts) {
       await this.accountService.create(userId, account);
     }
+
+    await this.currencyService.addUserCurrencies(userId, payload.currencyIds);
+
     const user = await this.userService.findById(userId);
+
     user.profile.onboarded = true;
     await user.profile.save();
   }

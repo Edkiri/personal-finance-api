@@ -60,6 +60,41 @@ module.exports = {
       },
     });
 
+    await queryInterface.createTable('user_currencies', {
+      currency_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'currencies',
+          key: 'id',
+        },
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      },
+    });
+
+    await queryInterface.addConstraint('user_currencies', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
+        field: 'id',
+      },
+    });
+
+    await queryInterface.addConstraint('user_currencies', {
+      fields: ['currency_id'],
+      type: 'foreign key',
+      references: {
+        table: 'currencies',
+        field: 'id',
+      },
+    });
+
     await queryInterface.addConstraint('accounts', {
       fields: ['user_id'],
       type: 'foreign key',

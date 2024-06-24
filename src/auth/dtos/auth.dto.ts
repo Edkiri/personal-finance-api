@@ -46,4 +46,10 @@ export class OnboardUserDto {
   @ValidateNested({ each: true })
   @Type(() => CreateAccountDto)
   accounts: CreateAccountDto[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Number)
+  currencyIds: number[];
 }

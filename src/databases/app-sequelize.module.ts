@@ -11,6 +11,7 @@ import { Income } from 'src/incomes/models/income.model';
 import * as dotenv from 'dotenv';
 import { User } from 'src/users/models/user.model';
 import { UserProfile } from 'src/users/models/profile.model';
+import { UserCurrencies } from 'src/accounts/models/user-currencies.model';
 
 // TODO: Make a configuration module to validate and export all env variables
 dotenv.config();
@@ -30,6 +31,7 @@ dotenv.config();
         UserProfile,
         Account,
         Currency,
+        UserCurrencies,
         Income,
         IncomeSource,
         ExpenseSource,

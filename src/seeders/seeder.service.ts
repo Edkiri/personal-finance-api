@@ -17,8 +17,14 @@ export class SeederService {
 
   async seed() {
     // Currencies
-    const eu = await this.currencyModel.create({ name: 'Euro', symbol: '€' });
-    const us = await this.currencyModel.create({ name: 'Dolar', symbol: '$' });
+    const USD = await this.currencyModel.create({ name: 'Dólar', symbol: '$' });
+    const EUR = await this.currencyModel.create({ name: 'Euro', symbol: '€' });
+    const JPY = await this.currencyModel.create({ name: 'Yen', symbol: '¥' });
+    const GBP = await this.currencyModel.create({ name: 'Libra', symbol: '£' });
+    const CHF = await this.currencyModel.create({
+      name: 'Franco',
+      symbol: 'CHF',
+    });
 
     // Admin user
     // const admin = await this.userModel.create({
