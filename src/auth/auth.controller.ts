@@ -32,6 +32,6 @@ export class AuthController {
   @Post('onboard')
   onboardUser(@Req() req: Request, @Body() payload: OnboardUserDto) {
     const userId = req.user.userId;
-    this.authService.onboardUser(userId, payload);
+    return this.authService.onboardUser(userId, payload);
   }
 }

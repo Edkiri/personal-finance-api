@@ -26,7 +26,6 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        unique: true,
       },
       amount: {
         type: Sequelize.FLOAT,
@@ -60,6 +59,7 @@ module.exports = {
     await queryInterface.createTable('user_currencies', {
       currency_id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: {
           model: 'currencies',
           key: 'id',
@@ -67,6 +67,7 @@ module.exports = {
       },
       user_id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: {
           model: 'users',
           key: 'id',
@@ -102,6 +103,7 @@ module.exports = {
     });
   },
   async down(queryInterface) {
+    await queryInterface.dropTable('user_currencies');
     await queryInterface.dropTable('accounts');
     await queryInterface.dropTable('currencies');
   },

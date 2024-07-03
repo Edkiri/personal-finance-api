@@ -4,6 +4,7 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsString,
   Length,
   ValidateNested,
@@ -49,7 +50,7 @@ export class OnboardUserDto {
 
   @IsArray()
   @ArrayNotEmpty()
-  @ValidateNested({ each: true })
+  @IsNumber({}, { each: true })
   @Type(() => Number)
   currencyIds: number[];
 }
