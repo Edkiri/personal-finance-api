@@ -38,7 +38,7 @@ export class AccountService {
   }
 
   async findById(accountId: number): Promise<Account | null> {
-    return this.acountModel.findByPk(accountId);
+    return this.acountModel.findByPk(accountId, { include: [Currency] });
   }
 
   async decreseAmount(accountId: number, amount: number): Promise<void> {
@@ -46,7 +46,7 @@ export class AccountService {
     if (!account) {
       throw new NotFoundException('Account not found.');
     }
-    this.acountModel.update(
+    await this.acountModel.update(
       { amount: parseFloat((account.amount - amount).toFixed(3)) },
       { where: { id: account.id } },
     );
@@ -55,7 +55,7 @@ export class AccountService {
   async increseAmount(accountId: number, amount: number): Promise<void> {
     const account = await this.acountModel.findByPk(accountId);
     if (!account) throw new NotFoundException('Account not found.');
-    this.acountModel.update(
+    await this.acountModel.update(
       { amount: parseFloat((account.amount + amount).toFixed(3)) },
       { where: { id: account.id } },
     );
