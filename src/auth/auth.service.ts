@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginDto, OnboardUserDto, SignupDto } from './dtos/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
@@ -36,6 +40,12 @@ export class AuthService {
   }
 
   async onboardUser(userId: number, payload: OnboardUserDto): Promise<void> {
+    const userProfile = await this.userService.findById(userId);
+
+    if (userProfile.profile.onboarded) {
+      throw new BadRequestException('User is already onboarded');
+    }
+
     for await (const account of payload.accounts) {
       await this.accountService.create(userId, account);
     }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from '../models/user.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { SignupDto } from 'src/auth/dtos/auth.dto';
@@ -16,8 +20,12 @@ export class UserService {
     return this.userModel.findOne({ where: { email } });
   }
 
-  async findById(userId: number): Promise<User | null> {
-    return this.userModel.findByPk(userId, { include: [UserProfile] });
+  async findById(userId: number): Promise<User> {
+    const user = this.userModel.findByPk(userId, { include: [UserProfile] });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   async create(data: SignupDto): Promise<User | null> {
