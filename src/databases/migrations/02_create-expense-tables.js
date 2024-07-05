@@ -32,6 +32,8 @@ module.exports = {
           model: 'accounts',
           key: 'id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       amount: {
         type: Sequelize.FLOAT,
@@ -57,7 +59,7 @@ module.exports = {
           model: 'users',
           key: 'id',
         },
-      }
+      },
     });
 
     await queryInterface.addConstraint('expenses', {

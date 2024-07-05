@@ -30,6 +30,10 @@ export class AccountService {
     await account.save();
   }
 
+  async delete(accountId: number): Promise<void> {
+    await this.acountModel.destroy({ where: { id: accountId } });
+  }
+
   async findByUserId(userId: number): Promise<Account[]> {
     return this.acountModel.findAll({
       where: { userId },

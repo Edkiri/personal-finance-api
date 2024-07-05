@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -50,5 +51,13 @@ export class AccountController {
     @Body() data: UpdateAccountDto,
   ) {
     await this.accountService.update(accountId, data);
+    return;
+  }
+
+  @Delete(':accountId')
+  @UseGuards(IsAccountOwnerGuard)
+  async deleteAccount(@Param('accountId', ParseIntPipe) accountId: number) {
+    await this.accountService.delete(accountId);
+    return;
   }
 }
