@@ -43,12 +43,19 @@ export class SeederService {
     });
 
     // Accounts
-    const account = await this.accountModel.create({
+    const BBVA = await this.accountModel.create({
       name: 'Nómina',
       userId: admin.id,
       bank: 'BBVA',
       currencyId: EUR.id,
       amount: 500,
+    });
+    const MERCANTIL = await this.accountModel.create({
+      name: 'Ahorro',
+      userId: admin.id,
+      bank: 'Mercantil',
+      currencyId: EUR.id,
+      amount: 600,
     });
     await this.userProfileModel.create({
       userId: admin.id,
@@ -89,12 +96,30 @@ export class SeederService {
 
       await this.expenseModel.create({
         expenseSourceId: expenseSource.id,
-        accountId: account.id,
+        accountId: BBVA.id,
         userId: admin.id,
         description,
         amount,
         date,
       });
     }
+
+    await this.expenseModel.create({
+      expenseSourceId: 1,
+      accountId: MERCANTIL.id,
+      userId: admin.id,
+      description: 'Prueba 1',
+      amount: 25,
+      date: getRandomDateInLastWeek(),
+    });
+
+    await this.expenseModel.create({
+      expenseSourceId: 3,
+      accountId: MERCANTIL.id,
+      userId: admin.id,
+      description: 'Prueba 2',
+      amount: 50,
+      date: getRandomDateInLastWeek(),
+    });
   }
 }

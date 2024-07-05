@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -56,6 +57,7 @@ export class AccountController {
 
   @Delete(':accountId')
   @UseGuards(IsAccountOwnerGuard)
+  @HttpCode(204)
   async deleteAccount(@Param('accountId', ParseIntPipe) accountId: number) {
     await this.accountService.delete(accountId);
     return;

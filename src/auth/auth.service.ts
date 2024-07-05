@@ -46,7 +46,10 @@ export class AuthService {
       throw new BadRequestException('User is already onboarded');
     }
 
-    for await (const account of payload.accounts) {
+    for await (const [index, account] of payload.accounts.entries()) {
+      if (index === 0) {
+        account.isDefault = true;
+      }
       await this.accountService.create(userId, account);
     }
 
