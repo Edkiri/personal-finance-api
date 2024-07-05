@@ -59,7 +59,7 @@ export class SeederService {
     });
     await this.userProfileModel.create({
       userId: admin.id,
-      onboarded: false,
+      onboarded: true,
     });
 
     const expensesPath = 'src/seeders/data/expenses.json';

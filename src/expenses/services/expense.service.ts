@@ -20,8 +20,11 @@ export class ExpenseService {
     return this.expenseModel.findByPk(id);
   }
 
-  public async find(userId: number, payload: FindExpenseQueryDto): Promise<Expense[]> {
-    const query: any = { userId };
+  public async find(
+    userId: number,
+    payload: FindExpenseQueryDto,
+  ): Promise<Expense[]> {
+    const query: any = { userId, accountId: payload.accountId };
 
     if (payload.dateFrom) {
       const { dateFrom } = payload;
@@ -40,7 +43,10 @@ export class ExpenseService {
     return expenses;
   }
 
-  public async create(userId: number, data: CreateExpenseDto): Promise<Expense | null> {
+  public async create(
+    userId: number,
+    data: CreateExpenseDto,
+  ): Promise<Expense | null> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
