@@ -1,4 +1,12 @@
-import { IsDate, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+} from 'class-validator';
 
 export class FindExpenseQueryDto {
   @IsNumber()
@@ -21,4 +29,11 @@ export class FindExpenseQueryDto {
   @IsDate()
   @IsOptional()
   dateTo?: Date;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  @IsOptional()
+  expenseSourceIds?: number[];
 }

@@ -42,6 +42,7 @@ export class ExpenseController {
     @Req() request: Request,
   ) {
     const userId = request.user.userId;
+    
     const expenses = await this.expenseService.find(userId, query);
     return expenses.map((expense) => expense.toJSON());
   }

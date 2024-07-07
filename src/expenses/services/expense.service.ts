@@ -32,6 +32,10 @@ export class ExpenseService {
       query.date = { [Op.between]: [new Date(dateFrom), dateTo] };
     }
 
+    if (payload.expenseSourceIds) {
+      query.expenseSourceId = { [Op.in]: payload.expenseSourceIds };
+    }
+
     const expenses = await this.expenseModel.findAll({
       where: query,
       include: ExpenseSource,
