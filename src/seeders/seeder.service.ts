@@ -97,6 +97,7 @@ export class SeederService {
       await this.expenseModel.create({
         expenseSourceId: expenseSource.id,
         accountId: BBVA.id,
+        currencyId: BBVA.currencyId,
         userId: admin.id,
         description,
         amount,
@@ -107,6 +108,7 @@ export class SeederService {
     await this.expenseModel.create({
       expenseSourceId: 1,
       accountId: MERCANTIL.id,
+      currencyId: BBVA.currencyId,
       userId: admin.id,
       description: 'Prueba 1',
       amount: 25,
@@ -116,6 +118,7 @@ export class SeederService {
     await this.expenseModel.create({
       expenseSourceId: 3,
       accountId: MERCANTIL.id,
+      currencyId: BBVA.currencyId,
       userId: admin.id,
       description: 'Prueba 2',
       amount: 50,

@@ -8,6 +8,7 @@ import {
 import { Account } from 'src/accounts/models/account.model';
 import { ExpenseSource } from './expense-source.model';
 import { User } from 'src/users/models/user.model';
+import { Currency } from 'src/accounts/models/currency.model';
 
 @Table({
   tableName: 'expenses',
@@ -46,4 +47,11 @@ export class Expense extends Model {
 
   @BelongsTo(() => User)
   user: User;
+
+  @ForeignKey(() => Currency)
+  @Column({ field: 'currency_id' })
+  currencyId: number;
+
+  @BelongsTo(() => Currency)
+  currency: Currency;
 }

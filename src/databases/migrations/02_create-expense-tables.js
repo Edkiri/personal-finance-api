@@ -35,6 +35,15 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      currency_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'currencies',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       amount: {
         type: Sequelize.FLOAT,
         allowNull: false,
@@ -76,6 +85,15 @@ module.exports = {
       type: 'foreign key',
       references: {
         table: 'users',
+        field: 'id',
+      },
+    });
+
+    await queryInterface.addConstraint('expenses', {
+      fields: ['currency_id'],
+      type: 'foreign key',
+      references: {
+        table: 'currencies',
         field: 'id',
       },
     });

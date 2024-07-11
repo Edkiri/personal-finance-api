@@ -7,6 +7,7 @@ import { AccountService } from 'src/accounts/services/account.service';
 import { ExpenseSource } from '../models/expense-source.model';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 import { Op } from 'sequelize';
+import { Currency } from 'src/accounts/models/currency.model';
 
 @Injectable()
 export class ExpenseService {
@@ -38,7 +39,7 @@ export class ExpenseService {
 
     const expenses = await this.expenseModel.findAll({
       where: query,
-      include: ExpenseSource,
+      include: [ExpenseSource, Currency],
       limit: payload.limit,
       offset: payload.offset,
       order: [['date', 'DESC']],
@@ -54,6 +55,7 @@ export class ExpenseService {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
+    const account = await this.accountService.findById(data.accountId);
     const expense = await this.expenseModel.create<Expense | null>({
       userId,
       accountId: data.accountId,
@@ -61,6 +63,7 @@ export class ExpenseService {
       description: data.description,
       expenseSourceId: expenseSource.id,
       date: data.date,
+      currencyId: account.currencyId,
     });
     await this.accountService.decreseAmount(data.accountId, data.amount);
     return expense ?? null;
