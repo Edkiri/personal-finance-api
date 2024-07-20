@@ -28,9 +28,15 @@ export class ExpenseService {
     const query: any = { userId, accountId: payload.accountId };
 
     if (payload.dateFrom) {
+      // Date From
       const { dateFrom } = payload;
+      const startDate = new Date(dateFrom);
+      startDate.setHours(0, 0, 0, 0);
+      // Date To
       const dateTo = payload.dateTo ?? new Date();
-      query.date = { [Op.between]: [new Date(dateFrom), dateTo] };
+      const endDate = new Date(dateTo);
+      endDate.setHours(23, 59, 59, 999);
+      query.date = { [Op.between]: [startDate, endDate] };
     }
 
     if (payload.expenseSourceIds) {

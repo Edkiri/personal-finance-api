@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import {
-  AllowNull,
   BelongsTo,
   Column,
   ForeignKey,

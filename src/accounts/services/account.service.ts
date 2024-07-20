@@ -38,6 +38,7 @@ export class AccountService {
     return this.acountModel.findAll({
       where: { userId },
       include: [Currency],
+      order: [['id', 'ASC']]
     });
   }
 
