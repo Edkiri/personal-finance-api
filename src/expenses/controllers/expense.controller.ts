@@ -10,9 +10,10 @@ import {
   Query,
   UseGuards,
   Req,
+  Patch,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
-import { CreateExpenseDto } from '../dtos/expenses';
+import { CreateExpenseDto, UpdateExpenseDto } from '../dtos/expenses';
 import { ExpenseSourceService } from '../services/expense-source.service';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
@@ -36,13 +37,23 @@ export class ExpenseController {
     return;
   }
 
+  @Patch(':expenseId')
+  @UseGuards(IsExpenseOwnerGuard)
+  async updateExpense(
+    @Param('expenseId', ParseIntPipe) expenseId: number,
+    @Body() data: UpdateExpenseDto,
+  ) {
+    await this.expenseService.update(expenseId, data);
+    return;
+  }
+
   @Get()
   async findExpenses(
     @Query() query: FindExpenseQueryDto,
     @Req() request: Request,
   ) {
     const userId = request.user.userId;
-    
+
     const expenses = await this.expenseService.find(userId, query);
     return expenses.map((expense) => expense.toJSON());
   }

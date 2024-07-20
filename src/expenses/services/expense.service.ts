@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Expense } from '../models/expense.model';
-import { CreateExpenseDto } from '../dtos/expenses';
+import { CreateExpenseDto, UpdateExpenseDto } from '../dtos/expenses';
 import { ExpenseSourceService } from './expense-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { ExpenseSource } from '../models/expense-source.model';
@@ -81,5 +81,36 @@ export class ExpenseService {
       where: { id: expenseId },
     });
     await this.accountService.increseAmount(expense.accountId, expense.amount);
+  }
+
+  public async update(
+    expenseId: number,
+    data: UpdateExpenseDto,
+  ): Promise<void> {
+    const expense = await this.findById(expenseId);
+    if (!expense) throw new NotFoundException('Expense not found');
+
+    const account = await this.accountService.findById(expense.accountId);
+    if (!account) throw new NotFoundException('Account not found');
+
+    if (data.amount !== undefined) {
+      const amountDifference = data.amount - expense.amount;
+      account.amount -= amountDifference;
+      expense.amount = data.amount;
+      account.save();
+    }
+    if (data.accountId !== undefined) {
+      expense.accountId = data.accountId;
+    }
+    if (data.date !== undefined) {
+      expense.date = data.date;
+    }
+    if (data.expenseSourceId !== undefined) {
+      expense.expenseSourceId = data.expenseSourceId;
+    }
+    if (data.description !== undefined) {
+      expense.description = data.description;
+    }
+    expense.save();
   }
 }

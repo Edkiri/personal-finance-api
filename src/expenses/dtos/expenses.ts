@@ -30,3 +30,28 @@ export class CreateExpenseDto {
   @IsOptional()
   description?: string;
 }
+
+export class UpdateExpenseDto {
+  @IsPositive()
+  @IsNumber()
+  @IsOptional()
+  amount?: number;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  accountId?: number;
+
+  @IsDate()
+  @IsOptional()
+  date?: Date;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  expenseSourceId?: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
