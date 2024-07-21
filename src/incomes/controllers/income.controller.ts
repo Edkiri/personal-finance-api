@@ -7,11 +7,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { IncomeSourceService } from '../services/income-source.service';
-import { CreateIncomeDto } from 'src/incomes/dtos/create-income.dto';
+import { CreateIncomeDto, FindIncomeQueryDto } from 'src/incomes/dtos/income.dto';
 import { IncomeService } from '../services/income.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { IsIncomeOwnerGuard } from '../guards/is-income-owner.guard';
@@ -27,9 +28,9 @@ export class IncomeController {
   ) {}
 
   @Get()
-  async findIncomes(@Req() req: Request) {
+  async findIncomes(@Req() req: Request, @Query() query: FindIncomeQueryDto) {
     const userId = req.user.userId;
-    const incomes = await this.incomeService.findByUserId(userId);
+    const incomes = await this.incomeService.findByUserId(userId, query);
     return incomes.map((income) => income.toJSON());
   }
 

@@ -8,6 +8,7 @@ import {
 import { Account } from 'src/accounts/models/account.model';
 import { IncomeSource } from './income-source.model';
 import { User } from 'src/users/models/user.model';
+import { Currency } from 'src/accounts/models/currency.model';
 
 @Table({
   tableName: 'incomes',
@@ -17,6 +18,16 @@ export class Income extends Model {
   @ForeignKey(() => Account)
   @Column({ field: 'account_id' })
   accountId: number;
+
+  @BelongsTo(() => Account)
+  account: Account;
+
+  @ForeignKey(() => Currency)
+  @Column({ field: 'currency_id' })
+  currencyId: number;
+
+  @BelongsTo(() => Currency)
+  currency: Currency;
 
   @Column({
     type: 'FLOAT',

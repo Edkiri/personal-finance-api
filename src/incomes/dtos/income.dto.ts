@@ -30,3 +30,9 @@ export class CreateIncomeDto {
   @IsOptional()
   description?: string;
 }
+
+export class FindIncomeQueryDto {
+  @IsNumber()
+  @IsPositive()
+  accountId: number;
+}

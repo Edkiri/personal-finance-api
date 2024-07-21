@@ -10,6 +10,8 @@ import { ExpenseSource } from 'src/expenses/models/expense-source.model';
 import { getRandomDateInLastWeek } from 'src/seeders/functions';
 import { Expense } from 'src/expenses/models/expense.model';
 import { UserProfile } from 'src/users/models/profile.model';
+import { Income } from 'src/incomes/models/income.model';
+import { IncomeSource } from 'src/incomes/models/income-source.model';
 dotenv.config();
 
 @Injectable()
@@ -20,6 +22,8 @@ export class SeederService {
     @InjectModel(Account) private accountModel: typeof Account,
     @InjectModel(Expense) private expenseModel: typeof Expense,
     @InjectModel(UserProfile) private userProfileModel: typeof UserProfile,
+    @InjectModel(Income) private incomeModel: typeof Income,
+    @InjectModel(IncomeSource) private incomeSourceModel: typeof IncomeSource,
     @InjectModel(ExpenseSource)
     private expenseSourceModel: typeof ExpenseSource,
   ) {}
@@ -108,7 +112,7 @@ export class SeederService {
     await this.expenseModel.create({
       expenseSourceId: 1,
       accountId: MERCANTIL.id,
-      currencyId: BBVA.currencyId,
+      currencyId: MERCANTIL.currencyId,
       userId: admin.id,
       description: 'Prueba 1',
       amount: 25,
@@ -118,11 +122,38 @@ export class SeederService {
     await this.expenseModel.create({
       expenseSourceId: 3,
       accountId: MERCANTIL.id,
-      currencyId: BBVA.currencyId,
+      currencyId: MERCANTIL.currencyId,
       userId: admin.id,
       description: 'Prueba 2',
       amount: 50,
       date: getRandomDateInLastWeek(),
+    });
+
+    // Incomes
+    const work = await this.incomeSourceModel.create({ name: 'Trabajo' });
+
+    this.incomeModel.create({
+      accountId: BBVA.id,
+      currencyId: BBVA.currencyId,
+      amount: 1350,
+      incomeSourceId: work.id,
+      userId: admin.id,
+    });
+
+    this.incomeModel.create({
+      accountId: BBVA.id,
+      currencyId: BBVA.currencyId,
+      amount: 1750,
+      incomeSourceId: work.id,
+      userId: admin.id,
+    });
+
+    this.incomeModel.create({
+      accountId: MERCANTIL.id,
+      currencyId: MERCANTIL.currencyId,
+      amount: 700,
+      incomeSourceId: work.id,
+      userId: admin.id,
     });
   }
 }
