@@ -132,7 +132,7 @@ export class SeederService {
     // Incomes
     const work = await this.incomeSourceModel.create({ name: 'Trabajo' });
 
-    this.incomeModel.create({
+    await this.incomeModel.create({
       accountId: BBVA.id,
       currencyId: BBVA.currencyId,
       amount: 1350,
@@ -140,7 +140,7 @@ export class SeederService {
       userId: admin.id,
     });
 
-    this.incomeModel.create({
+    await this.incomeModel.create({
       accountId: BBVA.id,
       currencyId: BBVA.currencyId,
       amount: 1750,
@@ -148,7 +148,7 @@ export class SeederService {
       userId: admin.id,
     });
 
-    this.incomeModel.create({
+    await this.incomeModel.create({
       accountId: MERCANTIL.id,
       currencyId: MERCANTIL.currencyId,
       amount: 700,
