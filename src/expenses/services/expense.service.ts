@@ -6,13 +6,15 @@ import { ExpenseSourceService } from './expense-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { ExpenseSource } from '../models/expense-source.model';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { Currency } from 'src/accounts/models/currency.model';
 import { Account } from 'src/accounts/models/account.model';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class ExpenseService {
   constructor(
+    private readonly sequelize: Sequelize,
     @InjectModel(Expense) private readonly expenseModel: typeof Expense,
     private readonly expenseSourceService: ExpenseSourceService,
     private readonly accountService: AccountService,
@@ -90,40 +92,61 @@ export class ExpenseService {
     expenseId: number,
     data: UpdateExpenseDto,
   ): Promise<void> {
-    const expense = await this.findById(expenseId);
-    if (!expense) throw new NotFoundException('Expense not found');
 
-    const account = await this.accountService.findById(expense.accountId);
-    if (!account) throw new NotFoundException('Account not found');
+    await this.sequelize.transaction(async (transaction: Transaction) => {
+      const expense = await this.findById(expenseId);
+      if (!expense) throw new NotFoundException('Expense not found');
 
-    if (data.amount !== undefined) {
-      const amountDifference = data.amount - expense.amount;
-      account.amount -= amountDifference;
-      expense.amount = data.amount;
-      account.save();
-    }
+      const originalAccount = await this.accountService.findById(expense.accountId);
 
-    if (data.accountId !== undefined) {
-      expense.accountId = data.accountId;
-    }
+      if (data.amount !== undefined) {
+        const isSameAccount =
+          data.accountId === undefined || data.accountId === expense.accountId;
+        if (isSameAccount) {
+          const amountDifference = data.amount - expense.amount;
+          originalAccount.amount -= amountDifference;
 
-    if (data.date !== undefined) {
-      expense.date = data.date;
-    }
+          await originalAccount.save({ transaction });
+        }
 
-    if (data.expenseSourceName !== undefined) {
-      const expenseSource = await this.expenseSourceService.findByNameOrCreate(
-        data.expenseSourceName,
-      );
-      if (expenseSource.id !== expense.expenseSource.id) {
-        expense.expenseSourceId = expenseSource.id;
+        const isOtherAccount =
+          data.accountId !== undefined && data.accountId !== expense.accountId;
+        if (isOtherAccount) {
+          const newAccount = await this.accountService.findById(data.accountId);
+          if (!newAccount) throw new NotFoundException('Account not found');
+
+          originalAccount.amount += expense.amount;
+          newAccount.amount -= data.amount;
+          await originalAccount.save({ transaction });
+          await newAccount.save({ transaction });
+        }
+
+        expense.amount = data.amount;
       }
-    }
 
-    if (data.description !== undefined) {
-      expense.description = data.description;
-    }
+      if (data.accountId !== undefined) {
+        expense.accountId = data.accountId;
+      }
 
-    expense.save();
+      if (data.date !== undefined) {
+        expense.date = data.date;
+      }
+
+      if (data.expenseSourceName !== undefined) {
+        const expenseSource =
+          await this.expenseSourceService.findByNameOrCreate(
+            data.expenseSourceName,
+          );
+        if (expenseSource.id !== expense.expenseSource.id) {
+          expense.expenseSourceId = expenseSource.id;
+        }
+      }
+
+      if (data.description !== undefined) {
+        expense.description = data.description;
+      }
+
+      await expense.save({ transaction });
+    });
   }
 }

@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
   Req,
-  Patch,
+  Put,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
 import { CreateExpenseDto, UpdateExpenseDto } from '../dtos/expenses';
@@ -37,7 +37,7 @@ export class ExpenseController {
     return;
   }
 
-  @Patch(':expenseId')
+  @Put(':expenseId')
   @UseGuards(IsExpenseOwnerGuard)
   async updateExpense(
     @Param('expenseId', ParseIntPipe) expenseId: number,
