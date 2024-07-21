@@ -64,6 +64,12 @@ export class ExpenseController {
     return expenseSources.map((source) => source.toJSON());
   }
 
+  @Get(':expenseId')
+  async findExpense(@Param('expenseId', ParseIntPipe) expenseId: number) {
+    const expense = await this.expenseService.findById(expenseId);
+    return expense.toJSON();
+  }
+
   @Delete(':expenseId')
   @UseGuards(IsExpenseOwnerGuard)
   @HttpCode(204)

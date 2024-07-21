@@ -8,6 +8,7 @@ import { ExpenseSource } from '../models/expense-source.model';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 import { Op } from 'sequelize';
 import { Currency } from 'src/accounts/models/currency.model';
+import { Account } from 'src/accounts/models/account.model';
 
 @Injectable()
 export class ExpenseService {
@@ -18,7 +19,9 @@ export class ExpenseService {
   ) {}
 
   public async findById(id: number): Promise<Expense | null> {
-    return this.expenseModel.findByPk(id);
+    return this.expenseModel.findByPk(id, {
+      include: [ExpenseSource, Currency, Account],
+    });
   }
 
   public async find(
@@ -116,11 +119,11 @@ export class ExpenseService {
         expense.expenseSourceId = expenseSource.id;
       }
     }
-    
+
     if (data.description !== undefined) {
       expense.description = data.description;
     }
-    
+
     expense.save();
   }
 }

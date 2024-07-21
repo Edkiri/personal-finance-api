@@ -19,6 +19,9 @@ export class Expense extends Model {
   @Column({ field: 'account_id' })
   accountId: number;
 
+  @BelongsTo(() => Account)
+  account: Account;
+
   @Column({
     type: 'FLOAT',
     allowNull: false,
