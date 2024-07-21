@@ -99,18 +99,28 @@ export class ExpenseService {
       expense.amount = data.amount;
       account.save();
     }
+
     if (data.accountId !== undefined) {
       expense.accountId = data.accountId;
     }
+
     if (data.date !== undefined) {
       expense.date = data.date;
     }
-    if (data.expenseSourceId !== undefined) {
-      expense.expenseSourceId = data.expenseSourceId;
+
+    if (data.expenseSourceName !== undefined) {
+      const expenseSource = await this.expenseSourceService.findByNameOrCreate(
+        data.expenseSourceName,
+      );
+      if (expenseSource.id !== expense.expenseSource.id) {
+        expense.expenseSourceId = expenseSource.id;
+      }
     }
+    
     if (data.description !== undefined) {
       expense.description = data.description;
     }
+    
     expense.save();
   }
 }

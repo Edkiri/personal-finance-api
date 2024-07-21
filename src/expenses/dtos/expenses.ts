@@ -46,10 +46,9 @@ export class UpdateExpenseDto {
   @IsOptional()
   date?: Date;
 
-  @IsNumber()
-  @IsPositive()
+  @IsString()
   @IsOptional()
-  expenseSourceId?: number;
+  expenseSourceName?: string;
 
   @IsString()
   @IsOptional()
