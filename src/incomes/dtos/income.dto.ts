@@ -1,4 +1,6 @@
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsDate,
   IsNotEmpty,
   IsNumber,
@@ -6,7 +8,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateIncomeDto {
   @IsPositive()
@@ -35,4 +37,19 @@ export class FindIncomeQueryDto {
   @IsNumber()
   @IsPositive()
   accountId: number;
+
+  @IsDate()
+  @IsOptional()
+  dateFrom?: Date;
+
+  @IsDate()
+  @IsOptional()
+  dateTo?: Date;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  @IsOptional()
+  incomeSourceIds?: number[];
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-
+import { Op } from 'sequelize';
 import {
   CreateIncomeDto,
   FindIncomeQueryDto,
@@ -9,6 +9,7 @@ import { IncomeSourceService } from './income-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { Income } from '../models/income.model';
 import { IncomeSource } from '../models/income-source.model';
+import { Currency } from 'src/accounts/models/currency.model';
 
 @Injectable()
 export class IncomeService {
@@ -44,11 +45,29 @@ export class IncomeService {
   ): Promise<Income[]> {
     const query: any = { userId, accountId: data.accountId };
 
+    if (data.dateFrom !== undefined) {
+
+      const { dateFrom } = data;
+      const startDate = new Date(dateFrom);
+      startDate.setHours(0, 0, 0, 0);
+
+      const dateTo = data.dateTo ?? new Date();
+      const endDate = new Date(dateTo);
+      endDate.setHours(23, 59, 59, 999);
+
+      query.date = { [Op.between]: [startDate, endDate] };
+    }
+
+    if (data.incomeSourceIds !== undefined) {
+      query.expenseSourceId = { [Op.in]: data.incomeSourceIds };
+    }
+
     const incomes = await this.incomeModel.findAll({
       where: query,
-      include: IncomeSource,
+      include: [IncomeSource, Currency],
+      order: [['date', 'DESC']],
     });
-    
+
     return incomes;
   }
 
