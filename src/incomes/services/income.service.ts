@@ -27,9 +27,11 @@ export class IncomeService {
     const incomeSource = await this.incomeSourceService.findByNameOrCreate(
       data.incomeSourceName,
     );
+    const account = await this.accountService.findById(data.accountId);
     const income = await this.incomeModel.create<Income | null>({
       userId,
       accountId: data.accountId,
+      currencyId: account.currencyId,
       amount: data.amount,
       description: data.description,
       incomeSourceId: incomeSource.id,
@@ -59,7 +61,7 @@ export class IncomeService {
     }
 
     if (data.incomeSourceIds !== undefined) {
-      query.expenseSourceId = { [Op.in]: data.incomeSourceIds };
+      query.incomeSourceId = { [Op.in]: data.incomeSourceIds };
     }
 
     const incomes = await this.incomeModel.findAll({

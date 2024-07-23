@@ -138,6 +138,7 @@ export class SeederService {
       amount: 1350,
       incomeSourceId: work.id,
       userId: admin.id,
+      date: new Date(new Date().setDate(new Date().getDate() - 7)),
     });
 
     await this.incomeModel.create({
@@ -146,6 +147,7 @@ export class SeederService {
       amount: 1750,
       incomeSourceId: work.id,
       userId: admin.id,
+      date: new Date(new Date().setDate(new Date().getDate() - 7)),
     });
 
     await this.incomeModel.create({
@@ -154,6 +156,7 @@ export class SeederService {
       amount: 700,
       incomeSourceId: work.id,
       userId: admin.id,
+      date: new Date(new Date().setDate(new Date().getDate() - 7)),
     });
   }
 }
