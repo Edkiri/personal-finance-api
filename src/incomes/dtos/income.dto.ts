@@ -53,3 +53,29 @@ export class FindIncomeQueryDto {
   @IsOptional()
   incomeSourceIds?: number[];
 }
+
+export class UpdateIncomeDto {
+  @IsPositive()
+  @IsNumber()
+  @IsOptional()
+  amount?: number;
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  accountId?: number;
+
+  @IsDate()
+  @IsOptional()
+  date?: Date = new Date();
+
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsNotEmpty()
+  @IsOptional()
+  incomeSourceName?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}

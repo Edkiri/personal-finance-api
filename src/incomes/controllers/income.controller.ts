@@ -7,12 +7,17 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { IncomeSourceService } from '../services/income-source.service';
-import { CreateIncomeDto, FindIncomeQueryDto } from 'src/incomes/dtos/income.dto';
+import {
+  CreateIncomeDto,
+  FindIncomeQueryDto,
+  UpdateIncomeDto,
+} from 'src/incomes/dtos/income.dto';
 import { IncomeService } from '../services/income.service';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { IsIncomeOwnerGuard } from '../guards/is-income-owner.guard';
@@ -48,11 +53,28 @@ export class IncomeController {
     return incomeSources.map((source) => source.toJSON());
   }
 
+  @Get(':incomeId')
+  @UseGuards(IsIncomeOwnerGuard)
+  async getIncomeDetail(@Param('incomeId', ParseIntPipe) incomeId: number) {
+    const income = await this.incomeService.findById(incomeId);
+    return income.toJSON();
+  }
+
   @Delete(':incomeId')
   @UseGuards(IsIncomeOwnerGuard)
   @HttpCode(204)
   async deleteIncome(@Param('incomeId', ParseIntPipe) incomeId: number) {
     await this.incomeService.delete(incomeId);
+    return;
+  }
+
+  @Put(':incomeId')
+  @UseGuards(IsIncomeOwnerGuard)
+  async updateIncome(
+    @Param('incomeId', ParseIntPipe) incomeId: number,
+    @Body() data: UpdateIncomeDto,
+  ) {
+    await this.incomeService.update(incomeId, data);
     return;
   }
 }

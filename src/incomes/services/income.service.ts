@@ -1,19 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Op, Transaction } from 'sequelize';
 import {
   CreateIncomeDto,
   FindIncomeQueryDto,
+  UpdateIncomeDto,
 } from 'src/incomes/dtos/income.dto';
 import { IncomeSourceService } from './income-source.service';
 import { AccountService } from 'src/accounts/services/account.service';
 import { Income } from '../models/income.model';
 import { IncomeSource } from '../models/income-source.model';
 import { Currency } from 'src/accounts/models/currency.model';
+import { Account } from 'src/accounts/models/account.model';
 
 @Injectable()
 export class IncomeService {
   constructor(
+    private readonly sequelize: Sequelize,
     @InjectModel(Income)
     private readonly incomeModel: typeof Income,
     private readonly incomeSourceService: IncomeSourceService,
@@ -48,7 +52,6 @@ export class IncomeService {
     const query: any = { userId, accountId: data.accountId };
 
     if (data.dateFrom !== undefined) {
-
       const { dateFrom } = data;
       const startDate = new Date(dateFrom);
       startDate.setHours(0, 0, 0, 0);
@@ -74,7 +77,9 @@ export class IncomeService {
   }
 
   public async findById(incomeId: number): Promise<Income | null> {
-    return this.incomeModel.findByPk(incomeId);
+    return this.incomeModel.findByPk(incomeId, {
+      include: [Currency, Account, IncomeSource],
+    });
   }
 
   public async delete(incomeId: number): Promise<void> {
@@ -84,5 +89,64 @@ export class IncomeService {
       where: { id: incomeId },
     });
     await this.accountService.decreseAmount(income.accountId, income.amount);
+  }
+
+  public async update(incomeId: number, data: UpdateIncomeDto): Promise<void> {
+    await this.sequelize.transaction(async (transaction: Transaction) => {
+      const income = await this.findById(incomeId);
+      if (!income) throw new NotFoundException('Expense not found');
+
+      const originalAccount = await this.accountService.findById(
+        income.accountId,
+      );
+
+      if (data.amount !== undefined) {
+        const isSameAccount =
+          data.accountId === undefined || data.accountId === income.accountId;
+        if (isSameAccount) {
+          const amountDifference = data.amount - income.amount;
+          originalAccount.amount += amountDifference;
+
+          await originalAccount.save({ transaction });
+        }
+
+        const isOtherAccount =
+          data.accountId !== undefined && data.accountId !== income.accountId;
+        if (isOtherAccount) {
+          const newAccount = await this.accountService.findById(data.accountId);
+          if (!newAccount) throw new NotFoundException('Account not found');
+
+          originalAccount.amount -= income.amount;
+          newAccount.amount += data.amount;
+          await originalAccount.save({ transaction });
+          await newAccount.save({ transaction });
+        }
+
+        income.amount = data.amount;
+      }
+
+      if (data.accountId !== undefined) {
+        income.accountId = data.accountId;
+      }
+
+      if (data.date !== undefined) {
+        income.date = data.date;
+      }
+
+      if (data.incomeSourceName !== undefined) {
+        const incomeSource = await this.incomeSourceService.findByNameOrCreate(
+          data.incomeSourceName,
+        );
+        if (incomeSource.id !== income.incomeSource.id) {
+          income.incomeSourceId = incomeSource.id;
+        }
+      }
+
+      if (data.description !== undefined) {
+        income.description = data.description;
+      }
+
+      await income.save({ transaction });
+    });
   }
 }
