@@ -42,6 +42,12 @@ dotenv.config();
       autoLoadModels: false,
       synchronize: false,
       logging: false,
+      pool: {
+        max: 10,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
+      },
     }),
   ],
   providers: [],
