@@ -42,7 +42,7 @@ export class DebtController {
 
   @Post('/pay')
   @UseGuards(IsAccountOwnerGuard, IsDebtOwnerGuard)
-  @HttpCode(204)
+  @HttpCode(201)
   async createDebtExpense(@Req() request: Request, @Body() data: PayDebtDto) {
     const userId = Number(request.user.userId);
     await this.debtExpenseService.payDebt(userId, data);

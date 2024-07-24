@@ -3,6 +3,7 @@ import { Debt } from '../models/debt.model';
 import { CreateDebtDto } from '../dtos/debts';
 import { ExpenseSourceService } from 'src/expenses/services/expense-source.service';
 import { ExpenseSource } from 'src/expenses/models/expense-source.model';
+import { Currency } from 'src/accounts/models/currency.model';
 
 export class DebtService {
   constructor(
@@ -33,6 +34,10 @@ export class DebtService {
   }
 
   async findAll(userId: number): Promise<Debt[]> {
-    return this.debtModel.findAll({ where: { userId }, include: [ExpenseSource] });
+    return this.debtModel.findAll({
+      where: { userId },
+      include: [ExpenseSource, Currency],
+      order: [['id', 'DESC']],
+    });
   }
 }
