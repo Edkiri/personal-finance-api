@@ -3,6 +3,8 @@ import { Account } from '../models/account.model';
 import { NotFoundException } from '@nestjs/common';
 import { Currency } from '../models/currency.model';
 import { CreateAccountDto, UpdateAccountDto } from '../dtos/accounts.dto';
+import { Transaction } from 'sequelize';
+import Decimal from 'decimal.js';
 
 export class AccountService {
   constructor(
@@ -38,7 +40,7 @@ export class AccountService {
     return this.acountModel.findAll({
       where: { userId },
       include: [Currency],
-      order: [['id', 'ASC']]
+      order: [['id', 'ASC']],
     });
   }
 
@@ -46,23 +48,39 @@ export class AccountService {
     return this.acountModel.findByPk(accountId, { include: [Currency] });
   }
 
-  async decreseAmount(accountId: number, amount: number): Promise<void> {
+  async decreseAmount(
+    transaction: Transaction,
+    accountId: number,
+    amount: number,
+  ): Promise<void> {
     const account = await this.acountModel.findByPk(accountId);
+
     if (!account) {
       throw new NotFoundException('Account not found.');
     }
+
+    const newAmount = new Decimal(account.amount).minus(amount);
+
     await this.acountModel.update(
-      { amount: parseFloat((account.amount - amount).toFixed(3)) },
-      { where: { id: account.id } },
+      { amount: newAmount.toNumber() },
+      { where: { id: account.id }, transaction },
     );
   }
 
-  async increseAmount(accountId: number, amount: number): Promise<void> {
+  async increseAmount(
+    transaction: Transaction,
+    accountId: number,
+    amount: number,
+  ): Promise<void> {
     const account = await this.acountModel.findByPk(accountId);
+
     if (!account) throw new NotFoundException('Account not found.');
+
+    const newAmount = new Decimal(account.amount).plus(amount);
+
     await this.acountModel.update(
-      { amount: parseFloat((account.amount + amount).toFixed(3)) },
-      { where: { id: account.id } },
+      { amount: newAmount.toNumber() },
+      { where: { id: account.id }, transaction },
     );
   }
 }

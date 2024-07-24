@@ -20,20 +20,26 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { Request } from 'express';
 import { IsExpenseOwnerGuard } from '../guards/is-expense-owner.guard';
 import { IsAccountOwnerGuard } from 'src/accounts/guards/is-account-owner.guard';
+import { Sequelize } from 'sequelize-typescript';
+import { DebtExpenseService } from 'src/debts/services/debt-expense.service';
 
 @Controller('expenses')
 @UseGuards(AuthenticatedGuard)
 export class ExpenseController {
   constructor(
+    private readonly sequelize: Sequelize,
     private readonly expenseService: ExpenseService,
     private readonly expenseSourceService: ExpenseSourceService,
+    private readonly debtExpenseService: DebtExpenseService
   ) {}
 
   @Post()
   @UseGuards(IsAccountOwnerGuard)
   async createExpense(@Req() request: Request, @Body() data: CreateExpenseDto) {
-    const userId = request.user.userId;
-    await this.expenseService.create(userId, data);
+    await this.sequelize.transaction(async (transaction) => {
+      const userId = request.user.userId;
+      this.expenseService.create(transaction, userId, data);
+    });
     return;
   }
 
@@ -43,8 +49,10 @@ export class ExpenseController {
     @Param('expenseId', ParseIntPipe) expenseId: number,
     @Body() data: UpdateExpenseDto,
   ) {
-    await this.expenseService.update(expenseId, data);
-    return;
+    await this.sequelize.transaction(async (transaction) => {
+      await this.expenseService.update(transaction, expenseId, data);
+      return;
+    })
   }
 
   @Get()
@@ -74,7 +82,9 @@ export class ExpenseController {
   @UseGuards(IsExpenseOwnerGuard)
   @HttpCode(204)
   async deleteExpense(@Param('expenseId', ParseIntPipe) expenseId: number) {
-    await this.expenseService.delete(expenseId);
+    await this.sequelize.transaction(async (transaction) => {
+      await this.expenseService.delete(expenseId, transaction);
+    });
     return;
   }
 }

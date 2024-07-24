@@ -10,6 +10,7 @@ import { Op, Transaction } from 'sequelize';
 import { Currency } from 'src/accounts/models/currency.model';
 import { Account } from 'src/accounts/models/account.model';
 import { Sequelize } from 'sequelize-typescript';
+import Decimal from 'decimal.js';
 
 @Injectable()
 export class ExpenseService {
@@ -60,93 +61,121 @@ export class ExpenseService {
   }
 
   public async create(
+    transaction: Transaction,
     userId: number,
     data: CreateExpenseDto,
-  ): Promise<Expense | null> {
+  ): Promise<Expense> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
       data.expenseSourceName,
     );
     const account = await this.accountService.findById(data.accountId);
-    const expense = await this.expenseModel.create<Expense | null>({
-      userId,
-      accountId: data.accountId,
-      amount: data.amount,
-      description: data.description,
-      expenseSourceId: expenseSource.id,
-      date: data.date,
-      currencyId: account.currencyId,
-    });
-    await this.accountService.decreseAmount(data.accountId, data.amount);
-    return expense ?? null;
+    const expense = await this.expenseModel.create(
+      {
+        userId,
+        accountId: data.accountId,
+        amount: data.amount,
+        description: data.description,
+        expenseSourceId: expenseSource.id,
+        date: data.date,
+        currencyId: account.currencyId,
+      },
+      { transaction },
+    );
+    await this.accountService.decreseAmount(
+      transaction,
+      data.accountId,
+      data.amount,
+    );
+    return expense;
   }
 
-  public async delete(expenseId: number): Promise<void> {
+  public async delete(
+    expenseId: number,
+    transaction: Transaction,
+  ): Promise<void> {
     const expense = await this.expenseModel.findByPk(expenseId);
+
     await this.expenseModel.destroy({
       where: { id: expenseId },
+      transaction,
     });
-    await this.accountService.increseAmount(expense.accountId, expense.amount);
+
+    await this.accountService.increseAmount(
+      transaction,
+      expense.accountId,
+      expense.amount,
+    );
   }
 
   public async update(
+    transaction: Transaction,
     expenseId: number,
     data: UpdateExpenseDto,
   ): Promise<void> {
+    const expense = await this.findById(expenseId);
+    if (!expense) throw new NotFoundException('Expense not found');
 
-    await this.sequelize.transaction(async (transaction: Transaction) => {
-      const expense = await this.findById(expenseId);
-      if (!expense) throw new NotFoundException('Expense not found');
+    const originalAccount = await this.accountService.findById(
+      expense.accountId,
+    );
 
-      const originalAccount = await this.accountService.findById(expense.accountId);
+    if (data.amount !== undefined) {
+      const isSameAccount =
+        data.accountId === undefined || data.accountId === expense.accountId;
 
-      if (data.amount !== undefined) {
-        const isSameAccount =
-          data.accountId === undefined || data.accountId === expense.accountId;
-        if (isSameAccount) {
-          const amountDifference = data.amount - expense.amount;
-          originalAccount.amount -= amountDifference;
+      if (isSameAccount) {
+        const amountDifference = new Decimal(data.amount).minus(
+          new Decimal(expense.amount),
+        );
+        originalAccount.amount = new Decimal(originalAccount.amount)
+          .minus(amountDifference)
+          .toNumber();
 
-          await originalAccount.save({ transaction });
-        }
-
-        const isOtherAccount =
-          data.accountId !== undefined && data.accountId !== expense.accountId;
-        if (isOtherAccount) {
-          const newAccount = await this.accountService.findById(data.accountId);
-          if (!newAccount) throw new NotFoundException('Account not found');
-
-          originalAccount.amount += expense.amount;
-          newAccount.amount -= data.amount;
-          await originalAccount.save({ transaction });
-          await newAccount.save({ transaction });
-        }
-
-        expense.amount = data.amount;
+        await originalAccount.save({ transaction });
       }
 
-      if (data.accountId !== undefined) {
-        expense.accountId = data.accountId;
+      const isOtherAccount =
+        data.accountId !== undefined && data.accountId !== expense.accountId;
+
+      if (isOtherAccount) {
+        const newAccount = await this.accountService.findById(data.accountId);
+        if (!newAccount) throw new NotFoundException('Account not found');
+
+        originalAccount.amount = new Decimal(originalAccount.amount)
+          .plus(new Decimal(expense.amount))
+          .toNumber();
+        newAccount.amount = new Decimal(newAccount.amount)
+          .minus(new Decimal(data.amount))
+          .toNumber();
+
+        await originalAccount.save({ transaction });
+        await newAccount.save({ transaction });
       }
 
-      if (data.date !== undefined) {
-        expense.date = data.date;
-      }
+      expense.amount = data.amount;
+    }
 
-      if (data.expenseSourceName !== undefined) {
-        const expenseSource =
-          await this.expenseSourceService.findByNameOrCreate(
-            data.expenseSourceName,
-          );
-        if (expenseSource.id !== expense.expenseSource.id) {
-          expense.expenseSourceId = expenseSource.id;
-        }
-      }
+    if (data.accountId !== undefined) {
+      expense.accountId = data.accountId;
+    }
 
-      if (data.description !== undefined) {
-        expense.description = data.description;
-      }
+    if (data.date !== undefined) {
+      expense.date = data.date;
+    }
 
-      await expense.save({ transaction });
-    });
+    if (data.expenseSourceName !== undefined) {
+      const expenseSource = await this.expenseSourceService.findByNameOrCreate(
+        data.expenseSourceName,
+      );
+      if (expenseSource.id !== expense.expenseSource.id) {
+        expense.expenseSourceId = expenseSource.id;
+      }
+    }
+
+    if (data.description !== undefined) {
+      expense.description = data.description;
+    }
+
+    await expense.save({ transaction });
   }
 }

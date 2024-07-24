@@ -4,7 +4,9 @@ import { ExpenseService } from 'src/expenses/services/expense.service';
 import { DebtService } from './debt.service';
 import { PayDebtDto } from '../dtos/debt-expense';
 import { Sequelize } from 'sequelize-typescript';
-import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { Transaction } from 'sequelize';
+import Decimal from 'decimal.js';
 
 export class DebtExpenseService {
   constructor(
@@ -16,46 +18,47 @@ export class DebtExpenseService {
   ) {}
 
   // create a expense with the debt expense_source
-  async payDebt(userId: number, data: PayDebtDto): Promise<void> {
-    try {
-      await this.sequelize.transaction(async (t) => {
-        const transactionHost = { transaction: t };
+  async payDebt(
+    transaction: Transaction,
+    userId: number,
+    data: PayDebtDto,
+  ): Promise<void> {
+    const debt = await this.debtService.findById(data.debtId);
 
-        const debt = await this.debtService.findById(data.debtId);
-        if (!debt) {
-          throw new NotFoundException('debt not found');
-        }
-
-        const expense = await this.expenseService.create(userId, {
-          accountId: data.accountId,
-          amount: data.amount,
-          expenseSourceName: debt.expenseSource.name,
-          date: new Date(),
-        });
-
-        await this.debtExpenseModel.create(
-          {
-            amount: data.amount,
-            expenseId: expense.id,
-            debtId: debt.id,
-            date: new Date(),
-          },
-          { transaction: transactionHost.transaction },
-        );
-
-        debt.totalPaid = debt.totalPaid + data.amount;
-
-        const diff = debt.amount - debt.totalPaid;
-        if (diff < 0.01 && diff > -0.01) {
-          debt.paid = true;
-          debt.paidDate = new Date();
-        }
-        await debt.save({ transaction: transactionHost.transaction });
-      });
-    } catch (err) {
-      const errorMessage = err.message || 'internal server error';
-      const errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-      throw new HttpException(errorMessage, errorStatus);
+    if (!debt) {
+      throw new NotFoundException('debt not found');
     }
+
+    const expense = await this.expenseService.create(transaction, userId, {
+      accountId: data.accountId,
+      amount: data.amount,
+      expenseSourceName: debt.expenseSource.name,
+      date: new Date(),
+    });
+
+    await this.debtExpenseModel.create(
+      {
+        amount: data.amount,
+        expenseId: expense.id,
+        debtId: debt.id,
+        date: new Date(),
+      },
+      { transaction },
+    );
+
+    const amount = new Decimal(data.amount);
+    const totalPaid = new Decimal(debt.totalPaid);
+    const debtAmount = new Decimal(debt.amount);
+
+    const updatedTotalPaid = totalPaid.plus(amount);
+    debt.totalPaid = updatedTotalPaid.toNumber();
+
+    const diff = debtAmount.minus(updatedTotalPaid);
+
+    if (diff.abs().lessThanOrEqualTo(new Decimal(0.01))) {
+      debt.paid = true;
+      debt.paidDate = new Date();
+    }
+    await debt.save({ transaction });
   }
 }

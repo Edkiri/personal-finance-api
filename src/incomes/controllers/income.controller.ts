@@ -23,11 +23,13 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { IsIncomeOwnerGuard } from '../guards/is-income-owner.guard';
 import { IsAccountOwnerGuard } from 'src/accounts/guards/is-account-owner.guard';
 import { Request } from 'express';
+import { Sequelize } from 'sequelize-typescript';
 
 @Controller('incomes')
 @UseGuards(AuthenticatedGuard)
 export class IncomeController {
   constructor(
+    private readonly sequelize: Sequelize,
     private readonly incomeService: IncomeService,
     private readonly incomeSourceService: IncomeSourceService,
   ) {}
@@ -41,9 +43,12 @@ export class IncomeController {
 
   @Post()
   @UseGuards(IsAccountOwnerGuard)
+  @HttpCode(201)
   async createIncome(@Req() req: Request, @Body() data: CreateIncomeDto) {
-    const userId = req.user.userId;
-    await this.incomeService.create(userId, data);
+    await this.sequelize.transaction(async (transaction) => {
+      const userId = req.user.userId;
+      await this.incomeService.create(transaction, userId, data);
+    });
     return;
   }
 
@@ -64,7 +69,10 @@ export class IncomeController {
   @UseGuards(IsIncomeOwnerGuard)
   @HttpCode(204)
   async deleteIncome(@Param('incomeId', ParseIntPipe) incomeId: number) {
-    await this.incomeService.delete(incomeId);
+    await this.sequelize.transaction(async (transaction) => {
+      await this.incomeService.delete(transaction, incomeId);
+    });
+
     return;
   }
 
@@ -74,7 +82,9 @@ export class IncomeController {
     @Param('incomeId', ParseIntPipe) incomeId: number,
     @Body() data: UpdateIncomeDto,
   ) {
-    await this.incomeService.update(incomeId, data);
+    await this.sequelize.transaction(async (transaction) => {
+      await this.incomeService.update(transaction, incomeId, data);
+    });
     return;
   }
 }
