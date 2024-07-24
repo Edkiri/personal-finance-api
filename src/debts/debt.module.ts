@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Debt } from './models/debt.model';
 import ExpenseModule from 'src/expenses/expense.module';
@@ -12,11 +12,12 @@ import { UserModule } from 'src/users/user.module';
 @Module({
   imports: [
     SequelizeModule.forFeature([Debt, DebtExpense]),
-    ExpenseModule,
+    forwardRef(() => ExpenseModule),
     AccountModule,
     UserModule,
   ],
   controllers: [DebtController],
   providers: [DebtService, DebtExpenseService],
+  exports: [DebtService, DebtExpenseService],
 })
 export default class DebtModule {}
