@@ -10,6 +10,8 @@ import { ExpenseSource } from 'src/expenses/models/expense-source.model';
 import { UserProfile } from 'src/users/models/profile.model';
 import { Income } from 'src/incomes/models/income.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
+import { Debt } from 'src/debts/models/debt.model';
+import { DebtExpense } from 'src/debts/models/debt-expense.mode';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { IncomeSource } from 'src/incomes/models/income-source.model';
       ExpenseSource,
       Income,
       IncomeSource,
+      Debt,
+      DebtExpense,
     ]),
   ],
   providers: [SeederService],

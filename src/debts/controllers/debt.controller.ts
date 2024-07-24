@@ -26,7 +26,7 @@ export class DebtController {
   ) {}
 
   @Post()
-  @HttpCode(204)
+  @HttpCode(201)
   async create(@Req() req: Request, @Body() data: CreateDebtDto): Promise<void> {
     const userId = Number(req.user.userId);
     await this.debtService.create(userId, data);

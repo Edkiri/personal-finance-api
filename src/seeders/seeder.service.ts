@@ -12,6 +12,8 @@ import { Expense } from 'src/expenses/models/expense.model';
 import { UserProfile } from 'src/users/models/profile.model';
 import { Income } from 'src/incomes/models/income.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
+import { Debt } from 'src/debts/models/debt.model';
+import { DebtExpense } from 'src/debts/models/debt-expense.mode';
 dotenv.config();
 
 @Injectable()
@@ -22,6 +24,8 @@ export class SeederService {
     @InjectModel(Account) private accountModel: typeof Account,
     @InjectModel(Expense) private expenseModel: typeof Expense,
     @InjectModel(UserProfile) private userProfileModel: typeof UserProfile,
+    @InjectModel(Debt) private debtModel: typeof Debt,
+    @InjectModel(DebtExpense) private debtExpenseModel: typeof DebtExpense,
     @InjectModel(Income) private incomeModel: typeof Income,
     @InjectModel(IncomeSource) private incomeSourceModel: typeof IncomeSource,
     @InjectModel(ExpenseSource)
@@ -157,6 +161,54 @@ export class SeederService {
       incomeSourceId: work.id,
       userId: admin.id,
       date: new Date(new Date().setDate(new Date().getDate() - 7)),
+    });
+
+    // Debts
+    const debt = await this.debtModel.create({
+      creditor: 'Bcas',
+      description: 'El curso',
+      amount: 7000,
+      total_paid: 400,
+      paid: false,
+      date: new Date(new Date().setDate(new Date().getDate() - 85)),
+      paid_date: null,
+      currencyId: EUR.id,
+      expenseSourceId: expenseSources.get('facturas').id,
+      userId: admin.id,
+    });
+
+    const expenseDebt1 = await this.expenseModel.create({
+      expenseSourceId: expenseSources.get('facturas').id,
+      accountId: BBVA.id,
+      currencyId: BBVA.currencyId,
+      userId: admin.id,
+      description: null,
+      amount: 200,
+      date: new Date(new Date().setDate(new Date().getDate() - 5)),
+    });
+
+    const expenseDebt2 = await this.expenseModel.create({
+      expenseSourceId: expenseSources.get('facturas').id,
+      accountId: BBVA.id,
+      currencyId: BBVA.currencyId,
+      userId: admin.id,
+      description: null,
+      amount: 200,
+      date: new Date(new Date().setDate(new Date().getDate() - 35)),
+    });
+
+    await this.debtExpenseModel.create({
+      amount: expenseDebt1.amount,
+      expenseId: expenseDebt1.id,
+      debtId: debt.id,
+      date: new Date(),
+    });
+
+    await this.debtExpenseModel.create({
+      amount: expenseDebt2.amount,
+      expenseId: expenseDebt2.id,
+      debtId: debt.id,
+      date: new Date(),
     });
   }
 }
