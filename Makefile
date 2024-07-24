@@ -1,3 +1,6 @@
+start:
+	docker-compose up --build -d
+
 up: 
 	docker-compose up -d
 
@@ -10,3 +13,6 @@ logs:
 prepare:
 	docker exec personal-finance-api npm run db:migrate
 	docker exec personal-finance-api npm run seed
+
+bash:
+	docker exec -it personal-finance-api bash
