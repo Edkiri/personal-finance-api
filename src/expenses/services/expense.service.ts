@@ -10,7 +10,7 @@ import { Op, Transaction } from 'sequelize';
 import { Currency } from 'src/accounts/models/currency.model';
 import { Account } from 'src/accounts/models/account.model';
 import { Sequelize } from 'sequelize-typescript';
-import Decimal from 'decimal.js';
+import { add, subtract } from 'src/utils';
 
 @Injectable()
 export class ExpenseService {
@@ -124,12 +124,8 @@ export class ExpenseService {
         data.accountId === undefined || data.accountId === expense.accountId;
 
       if (isSameAccount) {
-        const amountDifference = new Decimal(data.amount).minus(
-          new Decimal(expense.amount),
-        );
-        originalAccount.amount = new Decimal(originalAccount.amount)
-          .minus(amountDifference)
-          .toNumber();
+        const amountDifference = subtract(data.amount, expense.amount);
+        originalAccount.amount = subtract(originalAccount.amount, amountDifference);
 
         await originalAccount.save({ transaction });
       }
@@ -141,12 +137,8 @@ export class ExpenseService {
         const newAccount = await this.accountService.findById(data.accountId);
         if (!newAccount) throw new NotFoundException('Account not found');
 
-        originalAccount.amount = new Decimal(originalAccount.amount)
-          .plus(new Decimal(expense.amount))
-          .toNumber();
-        newAccount.amount = new Decimal(newAccount.amount)
-          .minus(new Decimal(data.amount))
-          .toNumber();
+        originalAccount.amount = add(originalAccount.amount, expense.amount);
+        newAccount.amount = subtract(newAccount.amount, data.amount);
 
         await originalAccount.save({ transaction });
         await newAccount.save({ transaction });

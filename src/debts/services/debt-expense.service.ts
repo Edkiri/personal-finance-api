@@ -6,6 +6,7 @@ import { PayDebtDto } from '../dtos/debt-expense';
 import { Sequelize } from 'sequelize-typescript';
 import { NotFoundException } from '@nestjs/common';
 import { Transaction } from 'sequelize';
+import { add, subtract } from 'src/utils';
 import Decimal from 'decimal.js';
 
 export class DebtExpenseService {
@@ -46,14 +47,11 @@ export class DebtExpenseService {
       { transaction },
     );
 
-    const amount = new Decimal(data.amount);
-    const totalPaid = new Decimal(debt.totalPaid);
-    const debtAmount = new Decimal(debt.amount);
+    const updatedTotalPaid = add(debt.totalPaid, data.amount);
 
-    const updatedTotalPaid = totalPaid.plus(amount);
-    debt.totalPaid = updatedTotalPaid.toNumber();
+    debt.totalPaid = updatedTotalPaid;
 
-    const diff = debtAmount.minus(updatedTotalPaid);
+    const diff = new Decimal(subtract(debt.amount, updatedTotalPaid));
 
     if (diff.abs().lessThanOrEqualTo(new Decimal(0.01))) {
       debt.paid = true;

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize-typescript';
 import { Op, Transaction } from 'sequelize';
 import {
   CreateIncomeDto,
@@ -13,13 +12,11 @@ import { Income } from '../models/income.model';
 import { IncomeSource } from '../models/income-source.model';
 import { Currency } from 'src/accounts/models/currency.model';
 import { Account } from 'src/accounts/models/account.model';
-import Decimal from 'decimal.js';
-import { parseNumber } from 'src/utils';
+import { add, subtract } from 'src/utils';
 
 @Injectable()
 export class IncomeService {
   constructor(
-    private readonly sequelize: Sequelize,
     @InjectModel(Income)
     private readonly incomeModel: typeof Income,
     private readonly incomeSourceService: IncomeSourceService,
@@ -126,12 +123,8 @@ export class IncomeService {
         data.accountId === undefined || data.accountId === income.accountId;
 
       if (isSameAccount) {
-        const amountDifference = new Decimal(data.amount).minus(
-          new Decimal(income.amount),
-        );
-        originalAccount.amount = parseNumber(
-          new Decimal(originalAccount.amount).plus(amountDifference),
-        );
+        const amountDifference = subtract(data.amount, income.amount);
+        originalAccount.amount = add(originalAccount.amount, amountDifference);
 
         await originalAccount.save({ transaction });
       }
@@ -143,13 +136,12 @@ export class IncomeService {
         const newAccount = await this.accountService.findById(data.accountId);
         if (!newAccount) throw new NotFoundException('Account not found');
 
-        originalAccount.amount = parseNumber(
-          new Decimal(originalAccount.amount).minus(new Decimal(income.amount)),
+        originalAccount.amount = subtract(
+          originalAccount.amount,
+          income.amount,
         );
 
-        newAccount.amount = parseNumber(
-          new Decimal(newAccount.amount).plus(new Decimal(data.amount)),
-        );
+        newAccount.amount = add(newAccount.amount, data.amount);
 
         await originalAccount.save({ transaction });
         await newAccount.save({ transaction });

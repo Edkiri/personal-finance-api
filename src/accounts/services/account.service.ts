@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Currency } from '../models/currency.model';
 import { CreateAccountDto, UpdateAccountDto } from '../dtos/accounts.dto';
 import { Transaction } from 'sequelize';
-import Decimal from 'decimal.js';
+import { add, subtract } from 'src/utils';
 
 export class AccountService {
   constructor(
@@ -59,10 +59,10 @@ export class AccountService {
       throw new NotFoundException('Account not found.');
     }
 
-    const newAmount = new Decimal(account.amount).minus(amount);
+    const newAmount = subtract(account.amount, amount);
 
     await this.acountModel.update(
-      { amount: newAmount.toNumber() },
+      { amount: newAmount },
       { where: { id: account.id }, transaction },
     );
   }
@@ -76,10 +76,10 @@ export class AccountService {
 
     if (!account) throw new NotFoundException('Account not found.');
 
-    const newAmount = new Decimal(account.amount).plus(amount);
+    const newAmount = add(account.amount, amount);
 
     await this.acountModel.update(
-      { amount: newAmount.toNumber() },
+      { amount: newAmount },
       { where: { id: account.id }, transaction },
     );
   }
