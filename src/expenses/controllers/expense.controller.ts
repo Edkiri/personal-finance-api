@@ -30,7 +30,7 @@ export class ExpenseController {
     private readonly sequelize: Sequelize,
     private readonly expenseService: ExpenseService,
     private readonly expenseSourceService: ExpenseSourceService,
-    private readonly debtExpenseService: DebtExpenseService
+    private readonly debtExpenseService: DebtExpenseService,
   ) {}
 
   @Post()
@@ -50,9 +50,25 @@ export class ExpenseController {
     @Body() data: UpdateExpenseDto,
   ) {
     await this.sequelize.transaction(async (transaction) => {
-      await this.expenseService.update(transaction, expenseId, data);
+      const { debtExpenseService, expenseService } = this;
+
+      const debtExpense = await debtExpenseService.findByExpenseId(expenseId);
+
+      if (
+        debtExpense &&
+        data.amount !== undefined &&
+        data.amount !== debtExpense.amount
+      ) {
+        await debtExpenseService.updatePayDebtAmount(
+          transaction,
+          debtExpense.id,
+          data.amount,
+        );
+      }
+
+      await expenseService.update(transaction, expenseId, data);
       return;
-    })
+    });
   }
 
   @Get()
@@ -83,7 +99,15 @@ export class ExpenseController {
   @HttpCode(204)
   async deleteExpense(@Param('expenseId', ParseIntPipe) expenseId: number) {
     await this.sequelize.transaction(async (transaction) => {
-      await this.expenseService.delete(expenseId, transaction);
+      const { debtExpenseService, expenseService } = this;
+
+      const debtExpense = await debtExpenseService.findByExpenseId(expenseId);
+
+      if (debtExpense) {
+        await debtExpenseService.removePayDebt(transaction, debtExpense.id);
+      }
+
+      await expenseService.delete(expenseId, transaction);
     });
     return;
   }
