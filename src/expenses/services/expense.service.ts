@@ -69,6 +69,7 @@ export class ExpenseService {
       data.expenseSourceName,
     );
     const account = await this.accountService.findById(data.accountId);
+
     const expense = await this.expenseModel.create(
       {
         userId,
@@ -90,8 +91,8 @@ export class ExpenseService {
   }
 
   public async delete(
-    expenseId: number,
     transaction: Transaction,
+    expenseId: number,
   ): Promise<void> {
     const expense = await this.expenseModel.findByPk(expenseId);
 
@@ -125,7 +126,10 @@ export class ExpenseService {
 
       if (isSameAccount) {
         const amountDifference = subtract(data.amount, expense.amount);
-        originalAccount.amount = subtract(originalAccount.amount, amountDifference);
+        originalAccount.amount = subtract(
+          originalAccount.amount,
+          amountDifference,
+        );
 
         await originalAccount.save({ transaction });
       }

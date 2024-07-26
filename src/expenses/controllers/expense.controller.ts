@@ -38,7 +38,7 @@ export class ExpenseController {
   async createExpense(@Req() request: Request, @Body() data: CreateExpenseDto) {
     await this.sequelize.transaction(async (transaction) => {
       const userId = request.user.userId;
-      this.expenseService.create(transaction, userId, data);
+      await this.expenseService.create(transaction, userId, data);
     });
     return;
   }
@@ -107,7 +107,7 @@ export class ExpenseController {
         await debtExpenseService.removePayDebt(transaction, debtExpense.id);
       }
 
-      await expenseService.delete(expenseId, transaction);
+      await expenseService.delete(transaction, expenseId);
     });
     return;
   }

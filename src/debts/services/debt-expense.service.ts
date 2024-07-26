@@ -32,7 +32,7 @@ export class DebtExpenseService {
       accountId: data.accountId,
       amount: data.amount,
       expenseSourceName: debt.expenseSource.name,
-      date: new Date(),
+      date: data.date,
     });
 
     await this.debtExpenseModel.create(
@@ -40,7 +40,7 @@ export class DebtExpenseService {
         amount: data.amount,
         expenseId: expense.id,
         debtId: debt.id,
-        date: new Date(),
+        date: data.date,
       },
       { transaction },
     );
@@ -118,5 +118,9 @@ export class DebtExpenseService {
     }
 
     await debt.save({ transaction });
+  }
+
+  async findByDebtId(debtId: number): Promise<DebtExpense[]> {
+    return this.debtExpenseModel.findAll({ where: { debtId } });
   }
 }

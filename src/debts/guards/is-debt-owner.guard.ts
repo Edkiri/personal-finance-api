@@ -15,7 +15,7 @@ export class IsDebtOwnerGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest() as Request;
 
-    const debtId = Number(req.body.debtId);
+    const debtId = this.getDebtIdFromRequest(req);
     const debt = await this.debtService.findById(debtId);
     if (!debt) {
       throw new NotFoundException('Debt not found');
@@ -28,5 +28,16 @@ export class IsDebtOwnerGuard implements CanActivate {
     }
 
     return true;
+  }
+
+  private getDebtIdFromRequest(req: Request): number | undefined {
+    let debtId: number | undefined;
+
+    debtId = Number(req.params.debtId);
+    if (!debtId) {
+      debtId = Number(req.body.debtId);
+    }
+
+    return debtId;
   }
 }

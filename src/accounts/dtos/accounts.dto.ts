@@ -35,7 +35,7 @@ export class CreateAccountDto {
 }
 
 export class UpdateAccountDto {
-  @IsInt()
+  @IsNumber({}, { message: 'Amount must be a number' })
   @Min(0, { message: 'Amount must be a positive number or zero' })
   amount!: number;
 

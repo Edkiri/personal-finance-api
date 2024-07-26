@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsPositive } from 'class-validator';
 
 export class PayDebtDto {
   @IsNumber()
@@ -12,4 +12,8 @@ export class PayDebtDto {
   @IsNumber()
   @IsPositive()
   accountId: number;
+
+  @IsDate()
+  @IsOptional()
+  date: Date = new Date();
 }
