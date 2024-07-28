@@ -11,15 +11,22 @@ export class AccountService {
     @InjectModel(Account) private readonly acountModel: typeof Account,
   ) {}
 
-  async create(userId: number, data: CreateAccountDto): Promise<void> {
-    await this.acountModel.create({
-      userId,
-      name: data.name,
-      amount: data.amount,
-      bank: data.bank,
-      currencyId: data.currencyId,
-      isDefault: data.isDefault ? true : false,
-    });
+  async create(
+    transaction: Transaction,
+    userId: number,
+    data: CreateAccountDto,
+  ): Promise<void> {
+    await this.acountModel.create(
+      {
+        userId,
+        name: data.name,
+        amount: data.amount,
+        bank: data.bank,
+        currencyId: data.currencyId,
+        isDefault: data.isDefault ? true : false,
+      },
+      { transaction },
+    );
   }
 
   async update(accountId: number, data: UpdateAccountDto): Promise<void> {

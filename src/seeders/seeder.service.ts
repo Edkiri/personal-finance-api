@@ -14,6 +14,7 @@ import { Income } from 'src/incomes/models/income.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
 import { Debt } from 'src/debts/models/debt.model';
 import { DebtExpense } from 'src/debts/models/debt-expense.mode';
+import { UserCurrencies } from 'src/accounts/models/user-currencies.model';
 dotenv.config();
 
 @Injectable()
@@ -21,6 +22,7 @@ export class SeederService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
     @InjectModel(Currency) private currencyModel: typeof Currency,
+    @InjectModel(UserCurrencies) private userCurrencyModel: typeof UserCurrencies,
     @InjectModel(Account) private accountModel: typeof Account,
     @InjectModel(Expense) private expenseModel: typeof Expense,
     @InjectModel(UserProfile) private userProfileModel: typeof UserProfile,
@@ -49,6 +51,9 @@ export class SeederService {
       password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10),
       email: process.env.ADMIN_EMAIL,
     });
+
+    await this.userCurrencyModel.create({ userId: admin.id, currencyId: EUR.id });
+    await this.userCurrencyModel.create({ userId: admin.id, currencyId: USD.id });
 
     // Accounts
     const BBVA = await this.accountModel.create({

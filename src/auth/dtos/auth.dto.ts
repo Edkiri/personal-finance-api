@@ -10,6 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateAccountDto } from 'src/accounts/dtos/accounts.dto';
+import { CreateExpenseSourceDto } from 'src/expenses/dtos/expenses';
 
 export class LoginDto {
   @IsString()
@@ -47,6 +48,12 @@ export class OnboardUserDto {
   @ValidateNested({ each: true })
   @Type(() => CreateAccountDto)
   accounts: CreateAccountDto[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateExpenseSourceDto)
+  expenseSources: CreateExpenseSourceDto[];
 
   @IsArray()
   @ArrayNotEmpty()

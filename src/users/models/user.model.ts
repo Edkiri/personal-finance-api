@@ -1,6 +1,14 @@
 import { DataTypes } from 'sequelize';
-import { Column, HasOne, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  HasOne,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { UserProfile } from './profile.model';
+import { Currency } from 'src/accounts/models/currency.model';
+import { UserCurrencies } from 'src/accounts/models/user-currencies.model';
 
 @Table({
   tableName: 'users',
@@ -38,4 +46,7 @@ export class User extends Model {
 
   @HasOne(() => UserProfile)
   profile: UserProfile;
+
+  @BelongsToMany(() => Currency, () => UserCurrencies)
+  currencies: Currency[];
 }

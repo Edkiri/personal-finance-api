@@ -5,7 +5,6 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Index,
 } from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 import { Currency } from './currency.model';

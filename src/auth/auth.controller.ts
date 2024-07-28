@@ -30,8 +30,9 @@ export class AuthController {
 
   @UseGuards(AuthenticatedGuard)
   @Post('onboard')
-  onboardUser(@Req() req: Request, @Body() payload: OnboardUserDto) {
+  async onboardUser(@Req() req: Request, @Body() payload: OnboardUserDto) {
     const userId = req.user.userId;
-    return this.authService.onboardUser(userId, payload);
+    await this.authService.onboardUser(userId, payload);
+    return;
   }
 }

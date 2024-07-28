@@ -100,8 +100,10 @@ export class ExpenseController {
     @Req() request: Request,
     @Body() data: CreateExpenseSourceDto,
   ) {
-    const userId = request.user.userId;
-    await this.expenseSourceService.create(userId, data);
+    await this.sequelize.transaction(async (transaction) => {
+      const userId = request.user.userId;
+      await this.expenseSourceService.create(transaction, userId, data);
+    });
     return;
   }
 

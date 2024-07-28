@@ -10,6 +10,7 @@ import {
   CreateExpenseSourceDto,
   UpdateExpenseSourceDto,
 } from '../dtos/expenses';
+import { Transaction } from 'sequelize';
 
 @Injectable()
 export class ExpenseSourceService {
@@ -38,12 +39,19 @@ export class ExpenseSourceService {
     });
   }
 
-  public async create(userId: number, data: CreateExpenseSourceDto) {
-    await this.expenseSourceModel.create({
-      userId,
-      name: data.name,
-      description: data.description ?? null,
-    });
+  public async create(
+    transaction: Transaction,
+    userId: number,
+    data: CreateExpenseSourceDto,
+  ) {
+    await this.expenseSourceModel.create(
+      {
+        userId,
+        name: data.name,
+        description: data.description ?? null,
+      },
+      { transaction },
+    );
   }
 
   public findById(expenseSourceId: number): Promise<ExpenseSource | null> {
