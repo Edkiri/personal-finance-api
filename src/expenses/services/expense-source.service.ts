@@ -18,23 +18,29 @@ export class ExpenseSourceService {
     private readonly expenseSourceModel: typeof ExpenseSource,
   ) {}
 
-  public async findByNameOrCreate(name: string): Promise<ExpenseSource> {
-    const expenseSource =
-      await this.expenseSourceModel.findOne<ExpenseSource | null>({
-        where: { name },
-      });
+  public async findByNameOrCreate(
+    userId: number,
+    name: string,
+  ): Promise<ExpenseSource> {
+    const expenseSource = await this.expenseSourceModel.findOne({
+      where: { name, userId },
+    });
 
     if (expenseSource) return expenseSource;
 
-    return this.expenseSourceModel.create({ name });
+    return this.expenseSourceModel.create({ name, userId });
   }
 
-  public async findAll(): Promise<ExpenseSource[]> {
-    return this.expenseSourceModel.findAll({ order: [['id', 'ASC']] });
+  public async findAll(userId: number): Promise<ExpenseSource[]> {
+    return this.expenseSourceModel.findAll({
+      where: { userId },
+      order: [['id', 'ASC']],
+    });
   }
 
-  public async create(data: CreateExpenseSourceDto) {
+  public async create(userId: number, data: CreateExpenseSourceDto) {
     await this.expenseSourceModel.create({
+      userId,
       name: data.name,
       description: data.description ?? null,
     });

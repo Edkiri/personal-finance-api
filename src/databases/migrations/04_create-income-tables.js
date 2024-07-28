@@ -15,6 +15,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
     });
 
     await queryInterface.createTable('incomes', {
@@ -95,6 +104,15 @@ module.exports = {
       type: 'foreign key',
       references: {
         table: 'accounts',
+        field: 'id',
+      },
+    });
+
+    await queryInterface.addConstraint('income_sources', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
         field: 'id',
       },
     });

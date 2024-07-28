@@ -15,6 +15,7 @@ export class DebtService {
 
   async create(userId: number, data: CreateDebtDto): Promise<void> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
+      userId,
       data.expenseSourceName,
     );
     await this.debtModel.create({

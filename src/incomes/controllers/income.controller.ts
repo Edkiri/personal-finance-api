@@ -53,8 +53,9 @@ export class IncomeController {
   }
 
   @Get('sources')
-  async getAllIncomeSources() {
-    const incomeSources = await this.incomeSourceService.findAll();
+  async getAllIncomeSources(@Req() req: Request) {
+    const userId = req.user.userId;
+    const incomeSources = await this.incomeSourceService.findAll(userId);
     return incomeSources.map((source) => source.toJSON());
   }
 

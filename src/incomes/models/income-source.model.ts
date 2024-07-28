@@ -1,4 +1,11 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { User } from 'src/users/models/user.model';
 
 @Table({
   tableName: 'income_sources',
@@ -10,4 +17,11 @@ export class IncomeSource extends Model {
 
   @Column
   description: string;
+
+  @ForeignKey(() => User)
+  @Column({ field: 'user_id' })
+  userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 }

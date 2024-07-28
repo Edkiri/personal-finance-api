@@ -66,6 +66,7 @@ export class ExpenseService {
     data: CreateExpenseDto,
   ): Promise<Expense> {
     const expenseSource = await this.expenseSourceService.findByNameOrCreate(
+      userId,
       data.expenseSourceName,
     );
     const account = await this.accountService.findById(data.accountId);
@@ -161,6 +162,7 @@ export class ExpenseService {
 
     if (data.expenseSourceName !== undefined) {
       const expenseSource = await this.expenseSourceService.findByNameOrCreate(
+        expense.userId,
         data.expenseSourceName,
       );
       if (expenseSource.id !== expense.expenseSource.id) {

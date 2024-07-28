@@ -88,15 +88,20 @@ export class ExpenseController {
   }
 
   @Get('sources')
-  async getAllExpenseSources() {
-    const expenseSources = await this.expenseSourceService.findAll();
+  async getAllExpenseSources(@Req() request: Request) {
+    const userId = request.user.userId;
+    const expenseSources = await this.expenseSourceService.findAll(userId);
     return expenseSources.map((source) => source.toJSON());
   }
 
   @Post('sources')
   @HttpCode(201)
-  async createExpenseSource(@Body() data: CreateExpenseSourceDto) {
-    await this.expenseSourceService.create(data);
+  async createExpenseSource(
+    @Req() request: Request,
+    @Body() data: CreateExpenseSourceDto,
+  ) {
+    const userId = request.user.userId;
+    await this.expenseSourceService.create(userId, data);
     return;
   }
 

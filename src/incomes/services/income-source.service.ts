@@ -9,10 +9,13 @@ export class IncomeSourceService {
     private readonly incomeSourceModel: typeof IncomeSource,
   ) {}
 
-  public async findByNameOrCreate(name: string): Promise<IncomeSource> {
+  public async findByNameOrCreate(
+    userId: number,
+    name: string,
+  ): Promise<IncomeSource> {
     const incomeSource =
       await this.incomeSourceModel.findOne<IncomeSource | null>({
-        where: { name },
+        where: { name, userId },
       });
 
     if (incomeSource) return incomeSource;
@@ -20,7 +23,7 @@ export class IncomeSourceService {
     return this.incomeSourceModel.create({ name });
   }
 
-  public async findAll(): Promise<IncomeSource[]> {
-    return this.incomeSourceModel.findAll();
+  public async findAll(userId: number): Promise<IncomeSource[]> {
+    return this.incomeSourceModel.findAll({ where: { userId } });
   }
 }

@@ -29,6 +29,7 @@ export class IncomeService {
     data: CreateIncomeDto,
   ): Promise<Income | null> {
     const incomeSource = await this.incomeSourceService.findByNameOrCreate(
+      userId,
       data.incomeSourceName,
     );
     const account = await this.accountService.findById(data.accountId);
@@ -160,6 +161,7 @@ export class IncomeService {
 
     if (data.incomeSourceName !== undefined) {
       const incomeSource = await this.incomeSourceService.findByNameOrCreate(
+        income.userId,
         data.incomeSourceName,
       );
       if (incomeSource.id !== income.incomeSource.id) {

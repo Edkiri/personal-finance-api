@@ -11,11 +11,19 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        unique: true,
       },
       description: {
         type: Sequelize.STRING,
         allowNull: true,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
     });
 
@@ -76,6 +84,15 @@ module.exports = {
       type: 'foreign key',
       references: {
         table: 'accounts',
+        field: 'id',
+      },
+    });
+
+    await queryInterface.addConstraint('expense_sources', {
+      fields: ['user_id'],
+      type: 'foreign key',
+      references: {
+        table: 'users',
         field: 'id',
       },
     });
