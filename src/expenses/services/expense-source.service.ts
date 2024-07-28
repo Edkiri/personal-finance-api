@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ExpenseSource } from '../models/expense-source.model';
 import {
@@ -57,7 +62,18 @@ export class ExpenseSourceService {
   public async delete(expenseSourceId: number): Promise<void> {
     const expenseSource = await this.findById(expenseSourceId);
     if (!expenseSource) throw new NotFoundException('Expense source not found');
-
-    await expenseSource.destroy();
+    try {
+      await expenseSource.destroy();
+    } catch (error) {
+      if (error.name === 'SequelizeForeignKeyConstraintError') {
+        throw new ConflictException(
+          'Cannot delete expense source due to associated records',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Failed to delete expense source',
+        );
+      }
+    }
   }
 }

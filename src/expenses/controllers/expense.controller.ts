@@ -115,11 +115,7 @@ export class ExpenseController {
   async deleteExpenseSource(
     @Param('expenseSourceId', ParseIntPipe) expenseSourceId: number,
   ) {
-    try {
-      await this.expenseSourceService.delete(expenseSourceId);
-    } catch (error) {
-      console.log(error);
-    }
+    await this.expenseSourceService.delete(expenseSourceId);
     return;
   }
 
