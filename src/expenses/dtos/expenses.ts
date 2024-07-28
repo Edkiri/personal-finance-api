@@ -54,3 +54,24 @@ export class UpdateExpenseDto {
   @IsOptional()
   description?: string;
 }
+
+export class CreateExpenseSourceDto {
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}
+
+export class UpdateExpenseSourceDto {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+}

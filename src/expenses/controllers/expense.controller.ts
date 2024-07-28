@@ -13,7 +13,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
-import { CreateExpenseDto, UpdateExpenseDto } from '../dtos/expenses';
+import {
+  CreateExpenseDto,
+  CreateExpenseSourceDto,
+  UpdateExpenseDto,
+  UpdateExpenseSourceDto,
+} from '../dtos/expenses';
 import { ExpenseSourceService } from '../services/expense-source.service';
 import { FindExpenseQueryDto } from '../dtos/find-expense-filter';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
@@ -86,6 +91,36 @@ export class ExpenseController {
   async getAllExpenseSources() {
     const expenseSources = await this.expenseSourceService.findAll();
     return expenseSources.map((source) => source.toJSON());
+  }
+
+  @Post('sources')
+  @HttpCode(201)
+  async createExpenseSource(@Body() data: CreateExpenseSourceDto) {
+    await this.expenseSourceService.create(data);
+    return;
+  }
+
+  @Put('sources/:expenseSourceId')
+  @HttpCode(200)
+  async updateExpenseSource(
+    @Param('expenseSourceId', ParseIntPipe) expenseSourceId: number,
+    @Body() data: UpdateExpenseSourceDto,
+  ) {
+    await this.expenseSourceService.update(expenseSourceId, data);
+    return;
+  }
+
+  @Delete('sources/:expenseSourceId')
+  @HttpCode(204)
+  async deleteExpenseSource(
+    @Param('expenseSourceId', ParseIntPipe) expenseSourceId: number,
+  ) {
+    try {
+      await this.expenseSourceService.delete(expenseSourceId);
+    } catch (error) {
+      console.log(error);
+    }
+    return;
   }
 
   @Get(':expenseId')
