@@ -169,7 +169,7 @@ export class IncomeService {
       }
     }
 
-    if (data.description !== undefined) {
+    if (data.description !== undefined || data.description !== null) {
       income.description = data.description;
     }
 

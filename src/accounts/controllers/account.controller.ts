@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -17,6 +18,7 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { CreateAccountDto, UpdateAccountDto } from '../dtos/accounts.dto';
 import { IsAccountOwnerGuard } from '../guards/is-account-owner.guard';
 import { Sequelize } from 'sequelize-typescript';
+import { ExpenseService } from 'src/expenses/services/expense.service';
 
 @Controller('accounts')
 @UseGuards(AuthenticatedGuard)
@@ -24,6 +26,7 @@ export class AccountController {
   constructor(
     private readonly sequelize: Sequelize,
     private readonly accountService: AccountService,
+    private readonly expenseService: ExpenseService,
   ) {}
 
   @Get()
@@ -65,7 +68,15 @@ export class AccountController {
   @Delete(':accountId')
   @UseGuards(IsAccountOwnerGuard)
   @HttpCode(204)
-  async deleteAccount(@Param('accountId', ParseIntPipe) accountId: number) {
+  async deleteAccount(
+    @Req() request: Request,
+    @Param('accountId', ParseIntPipe) accountId: number,
+  ) {
+    const userId = Number(request.user.userId);
+    const expenseCount = await this.expenseService.find(userId, { accountId });
+    if (expenseCount.length >= 1) {
+      throw new ConflictException('Account not empty');
+    }
     await this.accountService.delete(accountId);
     return;
   }
