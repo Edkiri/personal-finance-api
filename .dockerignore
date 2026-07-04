@@ -5,3 +5,4 @@ npm-debug.log
 .dockerignore
 dist
 docker-compose.yml
+postgres_data
