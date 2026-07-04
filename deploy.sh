@@ -10,6 +10,11 @@ set -euo pipefail
 PM2_NAME="${PM2_NAME:-personal-finance-api}"   # exact `pm2 ls` name
 # -----------------------------------------------------------------------------
 
+# ssh <host> 'cmd' runs a non-login shell, which doesn't source ~/.bashrc, so
+# nvm (and npm/node/pm2 with it) wouldn't be on PATH without this.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 cd "$(dirname "$0")"
 
 echo "==> [api] git pull"
