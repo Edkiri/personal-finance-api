@@ -95,7 +95,7 @@ export class SeederService {
 
       if (!expenseSources.has(expenseSourceName)) {
         const expenseSource = await this.expenseSourceModel.create({
-          name: expenseSourceName,
+          concept: expenseSourceName,
           userId: admin.id,
         });
         expenseSources.set(expenseSourceName, expenseSource);

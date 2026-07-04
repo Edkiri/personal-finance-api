@@ -59,19 +59,19 @@ export class CreateExpenseSourceDto {
   @IsString()
   @Transform(({ value }) => value.trim())
   @IsNotEmpty()
-  name: string;
+  concept: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+  alias?: string;
 }
 
 export class UpdateExpenseSourceDto {
   @IsString()
   @IsOptional()
-  name?: string;
+  concept?: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+  alias?: string;
 }

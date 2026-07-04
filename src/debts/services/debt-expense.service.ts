@@ -31,7 +31,7 @@ export class DebtExpenseService {
     const expense = await this.expenseService.create(transaction, userId, {
       accountId: data.accountId,
       amount: data.amount,
-      expenseSourceName: debt.expenseSource.name,
+      expenseSourceName: debt.expenseSource.concept,
       date: data.date,
     });
 

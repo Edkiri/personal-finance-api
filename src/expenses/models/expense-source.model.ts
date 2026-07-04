@@ -7,10 +7,10 @@ import { User } from 'src/users/models/user.model';
 })
 export class ExpenseSource extends Model {
   @Column
-  name: string;
+  concept: string;
 
   @Column({ allowNull: true })
-  description: string;
+  alias: string;
 
   @ForeignKey(() => User)
   @Column({ field: 'user_id' })

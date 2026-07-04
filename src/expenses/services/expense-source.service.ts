@@ -21,15 +21,15 @@ export class ExpenseSourceService {
 
   public async findByNameOrCreate(
     userId: number,
-    name: string,
+    concept: string,
   ): Promise<ExpenseSource> {
     const expenseSource = await this.expenseSourceModel.findOne({
-      where: { name, userId },
+      where: { concept, userId },
     });
 
     if (expenseSource) return expenseSource;
 
-    return this.expenseSourceModel.create({ name, userId });
+    return this.expenseSourceModel.create({ concept, userId });
   }
 
   public async findAll(userId: number): Promise<ExpenseSource[]> {
@@ -47,8 +47,8 @@ export class ExpenseSourceService {
     await this.expenseSourceModel.create(
       {
         userId,
-        name: data.name,
-        description: data.description ?? null,
+        concept: data.concept,
+        alias: data.alias ?? null,
       },
       { transaction },
     );
@@ -62,12 +62,12 @@ export class ExpenseSourceService {
     const expenseSource = await this.findById(expenseSourceId);
     if (!expenseSource) throw new NotFoundException('Expense source not found');
 
-    if (data.name !== undefined) {
-      expenseSource.name = data.name;
+    if (data.concept !== undefined) {
+      expenseSource.concept = data.concept;
     }
 
-    if (data.description !== undefined) {
-      expenseSource.description = data.description;
+    if (data.alias !== undefined) {
+      expenseSource.alias = data.alias;
     }
 
     return expenseSource.save();
