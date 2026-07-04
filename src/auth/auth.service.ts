@@ -29,7 +29,7 @@ export class AuthService {
     await this.userService.create(data);
   }
 
-  async login(data: LoginDto): Promise<{ access_token: string }> {
+  async login(data: LoginDto): Promise<{ access_token: string, message: string }> {
     const user = await this.userService.findByEmail(data.email);
     if (!user) {
       throw new UnauthorizedException();
