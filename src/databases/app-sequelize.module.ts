@@ -6,6 +6,8 @@ import { DebtExpense } from 'src/debts/models/debt-expense.mode';
 import { Debt } from 'src/debts/models/debt.model';
 import { ExpenseSource } from 'src/expenses/models/expense-source.model';
 import { Expense } from 'src/expenses/models/expense.model';
+import { HabitEntry } from 'src/habits/models/habit-entry.model';
+import { Habit } from 'src/habits/models/habit.model';
 import { IncomeSource } from 'src/incomes/models/income-source.model';
 import { Income } from 'src/incomes/models/income.model';
 import * as dotenv from 'dotenv';
@@ -38,6 +40,8 @@ dotenv.config();
         Expense,
         Debt,
         DebtExpense,
+        Habit,
+        HabitEntry,
       ],
       autoLoadModels: false,
       synchronize: false,
